@@ -4,6 +4,9 @@ GaTech Serve-Learn-Sustain Program <br/>
 <br/>
 __Contributed by:__ *Zijin Luo*, *Jinghua Zhang*, *Zhu Zhang* 
 
+## Disclaimer:
+This repository is a course group project in CS4400, Fall 2017 at Georgia Tech. Committing to Georgia Tech Honor Code, all three contributors, as a team, don't authorize anybody to use any content in this repository for any purposes including but not limited to current projects, assignments or future projects under any circumstances. 
+
 ## Phase I
 __Score: [You Guess](https://github.com/IvoryCandy/MARTA-Passenger-Traffic/blob/master/Phase%20I/Phase%20I.pdf)/100__
 1. [A cover page](https://github.com/IvoryCandy/MARTA-Passenger-Traffic/blob/master/Phase%20I/Phase%20I%20cover%20page.pdf)
