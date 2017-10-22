@@ -1,32 +1,31 @@
 CREATE TABLE USER
 (
-	Username varchar(15) NOT NULL,
-	Password varchar(15) NOT NULL,
-	PRIMARY KEY (Username)
+	Username	VARCHAR(15), 	NOT NULL,
+	Password 	VARCHAR(15), 	NOT NULL,
+	PRIMARY KEY (Username),
 );
 
 CREATE TABLE PASSENGER
 (
-	passenger_Username varchar(15) NOT NULL,
-	Passenger_Email varchar(25) NOT NULL,
-	PRIMARY KEY (Passenger_Username)
+	Passenger_Username	VARCHAR(15)		NOT NULL,
+	Passenger_Email		VARCHAR(30)		NOT NULL,
+	PRIMARY KEY (Passenger_Username),
 	UNIQUE (Passenger_Email)
-	CONSTRAINT CHECK Passenger_Email
-	FOREIGN KEY ('passenger_Username') REFERENCES USER('Username')
+	CONSTRAINT CHECK Passenger_Email    #这个啊 好像在ppt里没有这一条欸
+	FOREIGN KEY ('Passenger_Username') REFERENCES USER('Username')
 	ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-/*Username must be unique.
-Email addr must be unique
-password at least 8 char
-must have at least 1 BreezeCard
-Email addr match '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$' */
+/*
+password at least 8 charaters
+Email addr match '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$' 
+*/
 
 CREATE TABLE BREEZECARD
 (
-	Card_Number int(16) NOT NULL,
-	Card_Value char(6) NOT NULL,
-	Passenger_Username varchar(25) DEFAULT NULL,
+	Card_Number 		INT 			NOT	NULL,
+	Card_Value 			DECIMAL(6, 2), 	# or NOT NULL
+	Passenger_Username 	VARCHAR(25),    # nor DEFAULT NULL
 	PRIMARY KEY (Card_Number),
 	UNIQUE (Passenger_Username),
 	FOREIGN KEY ('Passenger_Username') REFERENCES PASSENGER ('Passenger_Username')
@@ -36,9 +35,9 @@ CREATE TABLE BREEZECARD
 
 CREATE TABLE STATION
 (
-	StopID varchar(255) NOT NULL,
-	enter_Fare varchar(255) NOT NULL,
-	closed_Status varchar(255) NOT NULL,
+	StopID 			INT 			NOT NULL,
+	Enter_Fare 		DECIMAL(4, 2), 	# or NOT NULL
+	Closed_Status 	BOOLEAN,
 	PRIMARY KEY (StopID)
 );
 /*Fare to enter: $0.00 to $50.00 inclusive*/
@@ -46,23 +45,23 @@ CREATE TABLE STATION
 
 CREATE TABLE BUSSTATION
 (
-	bus_station_Name varchar(255) NOT NULL,
-	station_StopID varchar(255) DEFAULT NULL,
-	intersection varchar(255) NOT NULL,
-	PRIMARY KEY (bus_station_Name, station_StopID)
-	FOREIGN KEY ('station_StopID') REFERENCES STATION ('StopID')
+	Bus_Dtation_Name 	VARCHAR(30) 	NOT NULL,
+	Station_StopID 		INT 			NOT NULL,
+	Intersection 		VARCHAR(30),
+	PRIMARY KEY (Bus_Dtation_Name, Station_StopID)
+	FOREIGN KEY ('Station_StopID') REFERENCES STATION ('StopID')
 	ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
 CREATE TABLE TRIP
 (
-	start_Time varchar(255) NOT NULL,
-	current_Fare varchar(255) NOT NULL,
-	BCNumber varchar(255) DEFAULT NULL,
-	station_StopID varchar(255) DEFAULT NULL,
-	PRIMARY KEY (start_Time, BCNumber)
-	FOREIGN KEY ('station_StopID') REFERENCES STATION ('StopID')
+	Start_Time 		CHAR(19) 		NOT NULL, 	# YYYY-MM-DD HH:MM:SS
+	Current_Fare 	DECIMAL(4, 2), 	# or NOT NULL
+	BCNumber 		INT 			NOT NULL,
+	Station_StopID 	INT, 			# or NOT NULL
+	PRIMARY KEY (Start_Time, BCNumber)
+	FOREIGN KEY ('Station_StopID') REFERENCES STATION ('StopID')
 	ON DELETE CASCADE ON UPDATE CASCADE
 	FOREIGN KEY ('BCNumber') REFERENCES BREEZECARD ('card_Number')
 	ON DELETE CASCADE ON UPDATE CASCADE
@@ -70,9 +69,9 @@ CREATE TABLE TRIP
 
 CREATE TABLE CONFLICT
 (
-	PassengerEmail varchar(255) DEFAULT NULL,
-	BCNumber varchar(255) DEFAULT NULL,
-	date_Time varchar(255) NOT NULL,
+	Passenger_Username 	VARCHAR(25)		NOT NULL,
+	BCNumber 			INT 			NOT NULL,
+	date_Time 			DATE,
 	PRIMARY KEY (PassengerEmail, BCNumber)
 	FOREIGN KEY ('PassengerEmail') REFERENCES PASSENGER ('Email')
 	ON DELETE CASCADE ON UPDATE CASCADE
