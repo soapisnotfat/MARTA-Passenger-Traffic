@@ -1,20 +1,20 @@
 CREATE TABLE USER
 (
-	Username	VARCHAR(25), 	NOT NULL,
+	Username	VARCHAR(25) 	NOT NULL,
 	Password 	VARCHAR(25)		NOT NULL,
-	CONSTRAINT USERUPK
+	CONSTRAINT USERPK
 		PRIMARY KEY (Username),
 );
 
 CREATE TABLE PASSENGER
 (
 	Passenger_Username	VARCHAR(25)		NOT NULL,
-	Passenger_Email		VARCHAR(50)		NOT NULL,
-	CONSTRAINT PASPUPK
+	Email				VARCHAR(50)		NOT NULL,
+	CONSTRAINT PASPK
 		PRIMARY KEY (Passenger_Username),
 	CONSTRAINT PASPEUNI
-		UNIQUE (Passenger_Email)
-		CHECK (Passenger_Email like '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$'), # put check here??
+		UNIQUE (Email)
+		CHECK (Email like '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$'), # put check here??
 	CONSTRAINT PASPUFK
 		FOREIGN KEY ('Passenger_Username') REFERENCES USER('Username')
 			ON DELETE CASCADE 	ON UPDATE CASCADE
@@ -26,14 +26,14 @@ password at least 8 charaters
 
 CREATE TABLE BREEZECARD
 (
-	Card_Number 		INT 			NOT	NULL,
-	Card_Value 			DECIMAL(6, 2), 	NOT NULL,
+	Card_ID		 		INT 			NOT	NULL,
+	Balance 			DECIMAL(6, 2), 	NOT NULL,
 	Passenger_Username 	VARCHAR(25),    # no need to add "DEFAULT NULL"
-	Suspension_Status	BOOLEAN			NOT NULL,
-	CONSTRAINT BCNUMPK
-		PRIMARY KEY (Card_Number),
+	Suspended_Status	BOOLEAN			NOT NULL,
+	CONSTRAINT BCPK
+		PRIMARY KEY (Card_ID),
 	CONSTRAINT BCV
-		CHECK (Card_Value >= 0 and Card_Value <= 1000),
+		CHECK (Balance >= 0 and Balance <= 1000),
 	CONSTRAINT BCPUFK
 		FOREIGN KEY ('Passenger_Username') REFERENCES PASSENGER ('Passenger_Username')
 			ON DELETE SET NULL 	ON UPDATE CASCADE
@@ -41,11 +41,11 @@ CREATE TABLE BREEZECARD
 
 CREATE TABLE STATION
 (
-	StopID 			INT 			NOT NULL,
-	Name			VARCHAR(30)		NOT NULL,
-	Station_Type	VARCHAR(5),		NOT NULL,
-	Enter_Fare 		DECIMAL(4, 2), 	NOT NULL,
-	Closed_Status 	BOOLEAN			NOT NULl,
+	StopID 				INT 			NOT NULL,
+	Name				VARCHAR(30)		NOT NULL,
+	Station_Type		VARCHAR(5),		NOT NULL,
+	Enter_Fare 			DECIMAL(4, 2), 	NOT NULL,
+	Station_Status 		BOOLEAN			NOT NULl,
 	CONSTRAINT STAIDPK
 		PRIMARY KEY (StopID),
 	CONSTRAINT STFARE
@@ -54,11 +54,11 @@ CREATE TABLE STATION
 
 CREATE TABLE BUSSTATION
 (
-	Bus_Dtation_Name 	VARCHAR(30) 	NOT NULL,
-	Station_StopID 		INT 			NOT NULL	DEFAULT -1,
+	Bus_Station_Name 	VARCHAR(30) 	NOT NULL,
+	Station_StopID 		INT 			NOT NULL,
 	Intersection 		VARCHAR(30),
 	CONSTRAINT BSTAPK
-		PRIMARY KEY (Bus_Dtation_Name, Station_StopID),
+		PRIMARY KEY (Bus_Station_Name, Station_StopID),
 	CONSTRAINT BSTAIDFK
 		FOREIGN KEY ('Station_StopID') REFERENCES STATION ('StopID')
 			ON DELETE CASCADE 	ON UPDATE CASCADE
@@ -87,11 +87,11 @@ CREATE TABLE CONFLICT
 	BCNumber 			INT 			NOT NULL,
 	date_Time 			DATE,			NOT NULL,
 	CONSTRAINT CONPK
-		PRIMARY KEY (PassengerEmail, BCNumber),
+		PRIMARY KEY (Passenger_Username, BCNumber),
 	CONSTRAINT CONEMFK
-		FOREIGN KEY ('PassengerEmail') REFERENCES PASSENGER ('Email')
+		FOREIGN KEY ('Passenger_Username') REFERENCES PASSENGER ('Passenger_Username')
 			ON DELETE CASCADE 	ON UPDATE CASCADE,
 	CONSTRAINT CONBCNFK
-		FOREIGN KEY ('BCNumber') REFERENCES BREEZECARD ('card_Number')
+		FOREIGN KEY ('BCNumber') REFERENCES BREEZECARD ('Card_ID')
 			ON DELETE CASCADE 	ON UPDATE CASCADE
 );
