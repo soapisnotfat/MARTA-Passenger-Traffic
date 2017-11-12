@@ -1,4 +1,3 @@
-# imports
 import config
 from datetime import datetime
 import MySQLdb
@@ -13,7 +12,7 @@ _cursor = None
 
 
 # setups - ignore this section
-def setupConnection():
+def setup_connection():
     global _connected
     global _database
     global _cursor
@@ -42,7 +41,7 @@ def setupConnection():
             traceback.print_exc()
 
 
-def closeConnection():
+def close_connection():
     global _connected
 
     if _connected:
@@ -91,7 +90,7 @@ def register(username, password, email, isAdmin):
 #     case 1 for administrator login
 #     case 2 for passenger login
 def login(username, password):
-    query = "SELECT * FROM USER WHERE username = %s AND password = %s;"
+    query = "SELECT * FROM User WHERE Username = %s AND Password = %s"
     response = _cursor.execute(query, (username, password))
 
     # clear cursor
@@ -100,7 +99,7 @@ def login(username, password):
     if response == 0:
         return 0
     else:
-        query = "SELECT Is_manager FROM USER WHERE Username = %s;"
+        query = "SELECT IsAdmin FROM User WHERE Username = %s"
         response = _cursor.execute(query, username)
 
         result = _cursor.fetchone()
@@ -124,8 +123,11 @@ INNER LAYER FUNCTIONS providing service for upper lay functions
 '''
 
 # insert tuples to user
+# @param: String: username
+# @param: String: Password
+# @param: int: isAdmin (1 or 0)
 def user_insert(username, password, isAdmin):
-    query = "INSERT INTO USER(username, password, isAdmin) VALUES (%s, %s, %s);"
+    query = "INSERT INTO User(Username, Password, IsAdmin) VALUES (%s, %s, %d)"
     try:
         response = _cursor.execute(query, (username, password, isAdmin))
         _database.commit()
@@ -138,35 +140,127 @@ def user_insert(username, password, isAdmin):
 
 
 # delete tuples from user
+# @param: String: Username
 def user_delete(username):
-    query = "DELETE FROM USER WHERE username = %s"
+    query = "DELETE FROM User WHERE Username = %s"
     try:
         response = _cursor.execute(query, username)
         _database.commit()
-    except Exception:
+    except Exception as e:
         # handle the exceptions
+        return ""
 
 
 # insert tuple to user
+# @param: String: username
+# @param: String: email
 def passenger_insert(username, email):
     email_regex = re.compile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
     if not email_regex.match(email):
         return "email format not match"
 
-    query = "INSERT INTO PASSENGER(username, email) VALUES (%s, %s);"
+    query = "INSERT INTO Passenger(Username, Email) VALUES (%s, %s)"
     try:
         response = _cursor.execute(query, (username, email))
         _database.commit()
     except Exception as e:
-        if xxx:
+        if True:
             return "email duplication"
-        #TODO: check email uniqueness
+        # TODO: check email uniqueness
 
 
+# insert tuples to Breezecard
+# @param: String: num (length 16 fixed)
+# @param: int: value
+# @param: String: BelongsTO
+def breezecard_insert(num, value, BelongsTo):
+    query = "INSERT INTO Breezecard(BreezecardNum, Value, BelongsTo) VALUES (%s, %d, %s)"
+    try:
+        response = _cursor.execute(query,(num, value, BelongsTo))
+        _database.commit()
+    except Exception as e:
+        if True:
+            # TODO: find the duplication condition
+            return "BreezecardNum duplication"
 
+
+# update breezecard value given breezecard num
+# @param: String: num (length 16 fixed)
+# @param: int: value
+def breezecard_update_value(num, value):
+    query = "UPDATE Breezecard SET Value = %d WHERE BreezecardNum = %s"
+    try:
+        response = _cursor.execute(query, (value, num))
+        _database.commit()
+    except Exception as e:
+        # TODO: see if some condition will break this query
+        return ""
+
+
+# insert tuples to Station
+# @param: String: StopID
+# @param: String: Name
+# @param: int: EnterFare
+# @param: int: CloseStatus (0 or 1)
+# @param: int: IsTrain (1 or 0)
+def staion_insert(stopid, name, enterFare, ClosedStatus, isTrain):
+    query = "INSERT INTO Station(StopID, Name, EnterFare, ClosedStatus, IsTrain) VALUES (%s, %s, %d, %d, %d)"
+    try:
+        response = _cursor.execute(query, (stopid, name, enterFare, ClosedStatus, isTrain))
+        _database.commit()
+    except Exception as e:
+        if True:
+            # TODO: find the duplication condition
+            return "StopID duplication"
+        elif True:
+            # TODO: find name and isTrain uniqueness violation condition
+            return "Name and IsTrain uniqueness violation"
+
+
+def busStationIntersection_insert(stopid, intersection):
+    query = "INSERT INTO BusStationIntersection(StopID, Intersection) VALUES (%s, %s)"
+    try:
+        response = _cursor.execute(query, (stopid, intersection))
+        _database.commit()
+    except Exception as e:
+        if True:
+            # TODO: find the duplication condition
+            return "StopID duplication"
+
+
+# insert tuples to Conflict
+# @param: String: Username
+# @param: String: BreezecardNum
+# @param: String: Datetime
+def conflict_insert(username, BreezeCardNum, DateTime):
+    # TODO: check the instance of TimeStamp
+    query = "INSERT INTO Conflict(Username, BreezecardNum, DataTime) VALUES (%s, %s, %s)"
+    try:
+        response = _cursor.execute(query, (username, BreezeCardNum, DateTime))
+        _database.commit()
+    except Exception as e:
+        if True:
+            # TODO: find the duplication condition
+            return "Username or BreezecardNum duplication"
+
+# insert tuples to Trip
+# @param: int: Tripfare
+# @param: String: StartTime
+# @param: String: BreezecardNum
+# @param: String: StartsAt
+def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt):
+    # TODO: check the instance of TimeStamp
+    query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt) VALUES (%d, %s, %s, %s)"
+    try:
+        response = _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
+        _database.commit()
+    except Exception as e:
+        if True:
+            # TODO: find the duplication condition
+            return "StartTime or BreezecardNum duplication"
 
 
 
 # Executions:
-setupConnection()
-closeConnection()
+setup_connection()
+close_connection()
