@@ -1,6 +1,6 @@
-import config
-from datetime import datetime
-import MySQLdb
+# import config
+# from datetime import datetime
+import pymysql
 import re
 import traceback
 
@@ -19,12 +19,12 @@ def setup_connection():
 
     if not _connected:
         try:
-            _database = MySQLdb.connect(host="https://academic-mysql.cc.gatech.edu/phpmyadmin",
+            _database = pymysql.connect(host="academic-mysql.cc.gatech.edu",
                                         user="cs4400_Group_91",
                                         passwd="_OY4gwQs",
-                                        db="MartaTraffic")
+                                        db="cs4400_Group_91")
 
-            # _database = MySQLdb.connect(host="localhost",
+            # _database = pymysql.connect(host="localhost",
             #                             user="root",
             #                             passwd="root",
             #                             db="MartaTraffic")
