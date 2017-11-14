@@ -10,38 +10,37 @@ _connected = False
 _database = None
 _cursor = None
 
-
 # setups - ignore this section
-def setup_connection():
+def set_connection():
     global _connected
     global _database
     global _cursor
 
     if not _connected:
         try:
+            print("********************************************")
+            print("*         Prepare for connecttion          *")
+
             _database = pymysql.connect(host="academic-mysql.cc.gatech.edu",
                                         user="cs4400_Group_91",
                                         passwd="_OY4gwQs",
                                         db="cs4400_Group_91")
-
-            # _database = pymysql.connect(host="localhost",
-            #                             user="root",
-            #                             passwd="root",
-            #                             db="MartaTraffic")
-
+                    
+            print("*    Connections should be ready to go     *")
             _cursor = _database.cursor()
             _connected = True
             if _connected:
-                print("hello")
+                print("*            Connections hails             *")
             else:
-                print("oh no")
+                print("*            Connections FAIL              *")
+            print("********************************************")
 
         except Exception as e:
             _connected = False
             traceback.print_exc()
 
 
-def close_connection():
+def turnoff_connection():
     global _connected
 
     if _connected:
@@ -57,7 +56,6 @@ UPPER LAYER FUNCTION
     - only use functions in this section for front-end implementation
     - follow the documentation of each function
 '''
-
 
 # register function that inserts tuples to database
 #
@@ -100,7 +98,7 @@ def login(username, password):
         return 0
     else:
         query = "SELECT IsAdmin FROM User WHERE Username = %s"
-        response = _cursor.execute(query, username)
+        _cursor.execute(query, username)
 
         result = _cursor.fetchone()
 
@@ -129,7 +127,7 @@ INNER LAYER FUNCTIONS providing service for upper lay functions
 def user_insert(username, password, isAdmin):
     query = "INSERT INTO User(Username, Password, IsAdmin) VALUES (%s, %s, %d)"
     try:
-        response = _cursor.execute(query, (username, password, isAdmin))
+        _cursor.execute(query, (username, password, isAdmin))
         _database.commit()
     except Exception as e:
         # TODO: check the violation conditions
@@ -144,7 +142,7 @@ def user_insert(username, password, isAdmin):
 def user_delete(username):
     query = "DELETE FROM User WHERE Username = %s"
     try:
-        response = _cursor.execute(query, username)
+        _cursor.execute(query, username)
         _database.commit()
     except Exception as e:
         # handle the exceptions
@@ -161,7 +159,7 @@ def passenger_insert(username, email):
 
     query = "INSERT INTO Passenger(Username, Email) VALUES (%s, %s)"
     try:
-        response = _cursor.execute(query, (username, email))
+        _cursor.execute(query, (username, email))
         _database.commit()
     except Exception as e:
         if True:
@@ -176,7 +174,7 @@ def passenger_insert(username, email):
 def breezecard_insert(num, value, BelongsTo):
     query = "INSERT INTO Breezecard(BreezecardNum, Value, BelongsTo) VALUES (%s, %d, %s)"
     try:
-        response = _cursor.execute(query,(num, value, BelongsTo))
+        _cursor.execute(query,(num, value, BelongsTo))
         _database.commit()
     except Exception as e:
         if True:
@@ -190,7 +188,7 @@ def breezecard_insert(num, value, BelongsTo):
 def breezecard_update_value(num, value):
     query = "UPDATE Breezecard SET Value = %d WHERE BreezecardNum = %s"
     try:
-        response = _cursor.execute(query, (value, num))
+        _cursor.execute(query, (value, num))
         _database.commit()
     except Exception as e:
         # TODO: see if some condition will break this query
@@ -206,7 +204,7 @@ def breezecard_update_value(num, value):
 def staion_insert(stopid, name, enterFare, ClosedStatus, isTrain):
     query = "INSERT INTO Station(StopID, Name, EnterFare, ClosedStatus, IsTrain) VALUES (%s, %s, %d, %d, %d)"
     try:
-        response = _cursor.execute(query, (stopid, name, enterFare, ClosedStatus, isTrain))
+        _cursor.execute(query, (stopid, name, enterFare, ClosedStatus, isTrain))
         _database.commit()
     except Exception as e:
         if True:
@@ -220,7 +218,7 @@ def staion_insert(stopid, name, enterFare, ClosedStatus, isTrain):
 def busStationIntersection_insert(stopid, intersection):
     query = "INSERT INTO BusStationIntersection(StopID, Intersection) VALUES (%s, %s)"
     try:
-        response = _cursor.execute(query, (stopid, intersection))
+        _cursor.execute(query, (stopid, intersection))
         _database.commit()
     except Exception as e:
         if True:
@@ -236,7 +234,7 @@ def conflict_insert(username, BreezeCardNum, DateTime):
     # TODO: check the instance of TimeStamp
     query = "INSERT INTO Conflict(Username, BreezecardNum, DataTime) VALUES (%s, %s, %s)"
     try:
-        response = _cursor.execute(query, (username, BreezeCardNum, DateTime))
+        _cursor.execute(query, (username, BreezeCardNum, DateTime))
         _database.commit()
     except Exception as e:
         if True:
@@ -252,7 +250,7 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt):
     # TODO: check the instance of TimeStamp
     query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt) VALUES (%d, %s, %s, %s)"
     try:
-        response = _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
+        _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
         _database.commit()
     except Exception as e:
         if True:
@@ -262,5 +260,9 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt):
 
 
 # Executions:
-setup_connection()
-close_connection()
+set_connection()
+query = "SELECT * FROM User WHERE Username = 'admin'"
+_cursor.execute(query)
+res = _cursor.fetchone()
+print(res)
+turnoff_connection()
