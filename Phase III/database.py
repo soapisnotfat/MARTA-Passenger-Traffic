@@ -19,7 +19,7 @@ def set_connection():
     if not _connected:
         try:
             print("********************************************")
-            print("*         Prepare for connecttion          *")
+            print("*          Prepare for connection          *")
 
             _database = pymysql.connect(host="academic-mysql.cc.gatech.edu",
                                         user="cs4400_Group_91",
@@ -30,10 +30,10 @@ def set_connection():
             _cursor = _database.cursor()
             _connected = True
             if _connected:
-                print("*            Connections hails             *")
+                print("*            Connections Setup             *")
             else:
                 print("*            Connections FAIL              *")
-            print("********************************************")
+            print("********************************************\n")
 
         except Exception as e:
             _connected = False
@@ -46,6 +46,10 @@ def turnoff_connection():
     if _connected:
         _database.close()
         _connected = False
+    print("********************************************\n" +
+          "*            Connections Closed            *\n" +
+          "********************************************\n")
+
 
 
 
@@ -123,48 +127,83 @@ INNER LAYER FUNCTIONS providing service for upper lay functions
 # insert tuples to user
 # @param: String: username
 # @param: String: Password
-# @param: int: isAdmin (1 or 0)
-def user_insert(username, password, isAdmin):
-    query = "INSERT INTO User(Username, Password, IsAdmin) VALUES (%s, %s, %d)"
+# @param: int: isAdmin (1 or 0) ---- this is aborted
+# returns:
+#   0 - successfully inserted
+#   1 - primary key violation
+#   2 - other violations
+def user_insert(username, password):
+    query = "INSERT INTO User(Username, Password, IsAdmin) VALUES ('%s', '%s', '%d');"
     try:
-        _cursor.execute(query, (username, password, isAdmin))
+        print("log :: executing user insertion query\n")
+        _cursor.execute(query % (username, password, 0))
         _database.commit()
+        print("++ Successfully insert " + username + " into database ++\n")
+        return 0
+
     except Exception as e:
-        # TODO: check the violation conditions
-        if e[1][-2:] == 'Y\'':  # violates primary key constraint, username
-            return "username duplication"
-        else:  # don't get here
-            return "user other exception"
+        print("----------------------------\n" +
+              "---> run into Exception <---\n" +
+              "----------------------------")
+        print("---> " + str(e) + '\n')  # print exception message
+        if str(e)[1:5] == "1062":
+            # violates primary key constraint, username
+            return 1
+        else:
+            # other violation
+            return 2
 
 
 # delete tuples from user
 # @param: String: Username
+# returns:
+#   0 - successfully deleted
+#   1 - deletion failed
 def user_delete(username):
-    query = "DELETE FROM User WHERE Username = %s"
+    query = "DELETE FROM User WHERE Username = '%s';"
     try:
-        _cursor.execute(query, username)
+        print("log :: executing user deletion query\n")
+        _cursor.execute(query % username)
         _database.commit()
+        print("++ Successfully delete " + username + " from database ++\n")
+        return 0
+
     except Exception as e:
-        # handle the exceptions
-        return ""
+        print("----------------------------\n" +
+              "---> run into Exception <---\n" +
+              "----------------------------")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
 
 
 # insert tuple to user
 # @param: String: username
 # @param: String: email
+# returns:
+#   -1 - email format doesn't match
+#   0 - successfully inserted
+#   1 - deletion failed
 def passenger_insert(username, email):
     email_regex = re.compile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
     if not email_regex.match(email):
-        return "email format not match"
+        return -1
 
-    query = "INSERT INTO Passenger(Username, Email) VALUES (%s, %s)"
+    query = "INSERT INTO Passenger(Username, Email) VALUES ('%s', '%s')"
     try:
-        _cursor.execute(query, (username, email))
+        print("log :: executing passenger insertion query\n")
+        _cursor.execute(query % (username, email))
         _database.commit()
+        print("++ Successfully insert " + username + " into database ++\n")
+        return 0
+    
     except Exception as e:
-        if True:
-            return "email duplication"
-        # TODO: check email uniqueness
+        print("----------------------------\n" +
+              "---> run into Exception <---\n" +
+              "----------------------------")
+        print("---> " + str(e) + '\n')  # print exception message
+        if str(e)[1:5] == "1062":
+            # primary key violation: Email
+            return 1
 
 
 # insert tuples to Breezecard
@@ -172,14 +211,22 @@ def passenger_insert(username, email):
 # @param: int: value
 # @param: String: BelongsTO
 def breezecard_insert(num, value, BelongsTo):
-    query = "INSERT INTO Breezecard(BreezecardNum, Value, BelongsTo) VALUES (%s, %d, %s)"
+    query = "INSERT INTO Breezecard(BreezecardNum, Value, BelongsTo) VALUES ('%s', '%d', '%s')"
     try:
-        _cursor.execute(query,(num, value, BelongsTo))
+        print("log :: executing Breezecard insertion query\n")
+        _cursor.execute(query % (num, value, BelongsTo))
         _database.commit()
+        print("++ Successfully insert " + num + " into database ++\n")
+        return 0
+
     except Exception as e:
-        if True:
-            # TODO: find the duplication condition
-            return "BreezecardNum duplication"
+        print("----------------------------\n" +
+              "---> run into Exception <---\n" +
+              "----------------------------")
+        print("---> " + str(e) + '\n')  # print exception message
+        if str(e)[1:5] == "1062":
+            # primary key violation, breezecardNum
+            return 1
 
 
 # update breezecard value given breezecard num
@@ -261,8 +308,5 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt):
 
 # Executions:
 set_connection()
-query = "SELECT * FROM User WHERE Username = 'admin'"
-_cursor.execute(query)
-res = _cursor.fetchone()
-print(res)
+user_delete("123")
 turnoff_connection()
