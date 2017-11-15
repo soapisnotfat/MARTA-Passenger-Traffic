@@ -1,4 +1,3 @@
-# import config
 # from datetime import datetime
 import pymysql
 import re
@@ -195,7 +194,7 @@ def passenger_insert(username, email):
         _database.commit()
         print("++ Successfully insert " + username + " into database ++\n")
         return 0
-    
+
     except Exception as e:
         print("----------------------------\n" +
               "---> run into Exception <---\n" +
