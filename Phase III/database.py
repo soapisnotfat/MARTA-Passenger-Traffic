@@ -1,4 +1,4 @@
-# from datetime import datetime
+from datetime import datetime
 import pymysql
 import re
 import traceback
@@ -9,7 +9,9 @@ _connected = False
 _database = None
 _cursor = None
 
-# setups - ignore this section
+'''
+database connection managements
+'''
 def set_connection():
     global _connected
     global _database
@@ -38,8 +40,7 @@ def set_connection():
             _connected = False
             traceback.print_exc()
 
-
-def turnoff_connection():
+def close_connection():
     global _connected
 
     if _connected:
@@ -50,39 +51,9 @@ def turnoff_connection():
           "********************************************\n")
 
 
-
-
 '''
-UPPER LAYER FUNCTION
-
-- IMPORTANCE-: 
-    - only use functions in this section for front-end implementation
-    - follow the documentation of each function
+BASE LAYER FUNCTIONS providing service for upper lay functions
 '''
-
-# register function that inserts tuples to database
-#
-# returns:
-#     case 0 for register successfully
-#     case 1 for email doesn't match format
-#     case 2 for username duplication
-#     case 3 for email duplication
-#     case 4 for all other exceptions
-def register(username, password, email, isAdmin):
-    user_insert_result = user_insert(username, password, isAdmin)
-    if user_insert_result == "username duplication":
-        return 2
-    elif user_insert_result == "user other exception":
-        return 4
-    if not isAdmin:
-        passenger_insert_result = passenger_insert(username, email)
-        if passenger_insert_result == "email format not match":
-            return 1
-        elif passenger_insert_result == "email duplication":
-            user_delete(username)
-            return 3
-    return 0
-
 
 # login function that check the login status
 #
@@ -90,9 +61,9 @@ def register(username, password, email, isAdmin):
 #     case 0 for failed tries
 #     case 1 for administrator login
 #     case 2 for passenger login
-def login(username, password):
-    query = "SELECT * FROM User WHERE Username = %s AND Password = %s"
-    response = _cursor.execute(query, (username, password))
+def db_login(username, password):
+    query = "SELECT * FROM User WHERE Username = '%s'AND Password = '%s'"
+    response = _cursor.execute(query % (username, password))
 
     # clear cursor
     _cursor.fetchall()
@@ -100,8 +71,8 @@ def login(username, password):
     if response == 0:
         return 0
     else:
-        query = "SELECT IsAdmin FROM User WHERE Username = %s"
-        _cursor.execute(query, username)
+        query = "SELECT IsAdmin FROM User WHERE Username = '%s'"
+        _cursor.execute(query % username)
 
         result = _cursor.fetchone()
 
@@ -113,15 +84,28 @@ def login(username, password):
         else:
             return 2
 
+# returns:
+#   0 - doesn't exist
+#   1 - exist
+def db_bc_exist(num):
+    query = "SELECT * FROM Breezecard WHERE breezecardNum = '%s'"
+    response = _cursor.execute(query % num)
+    _cursor.fetchall()
+    if response == 0:
+        return 0
+    else:
+        return 1
 
-
-
-
-'''
-INNER LAYER FUNCTIONS providing service for upper lay functions
-
-- DO NOT MODIFY THIS SECTION -
-'''
+# returns:
+#   the info of this card
+#   format: ('0919948381768459', Decimal('126.50'), 'commuter14')
+#           ('9876543212345670', Decimal('92.50'), None)
+def db_bc_info(num):
+    query = "SELECT * FROM Breezecard WHERE breezecardNum = '%s'"
+    _cursor.execute(query % num)
+    res = _cursor.fetchone()
+    _cursor.fetchall()
+    return res
 
 # insert tuples to user
 # @param: String: username
@@ -131,27 +115,25 @@ INNER LAYER FUNCTIONS providing service for upper lay functions
 #   0 - successfully inserted
 #   1 - primary key violation
 #   2 - other violations
-def user_insert(username, password):
-    query = "INSERT INTO User(Username, Password, IsAdmin) VALUES ('%s', '%s', '%d');"
-    try:
-        print("log :: executing user insertion query\n")
-        _cursor.execute(query % (username, password, 0))
-        _database.commit()
-        print("++ Successfully insert " + username + " into database ++\n")
-        return 0
+def user_insert(username, password, isAdmin=None):
+    if isAdmin is None:
+        query = "INSERT INTO User(Username, Password, IsAdmin) VALUES ('%s', '%s', '%d');"
+        try:
+            print("log :: executing user insertion query\n")
+            _cursor.execute(query % (username, password, 0))
+            _database.commit()
+            print("++ Successfully insert " + username + " into database ++\n")
+            return 0
 
-    except Exception as e:
-        print("----------------------------\n" +
-              "---> run into Exception <---\n" +
-              "----------------------------")
-        print("---> " + str(e) + '\n')  # print exception message
-        if str(e)[1:5] == "1062":
-            # violates primary key constraint, username
-            return 1
-        else:
-            # other violation
-            return 2
-
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            if str(e)[1:5] == "1062":
+                # violates primary key constraint, username
+                return 1
+            else:
+                # other violation
+                return 2
 
 # delete tuples from user
 # @param: String: Username
@@ -168,12 +150,9 @@ def user_delete(username):
         return 0
 
     except Exception as e:
-        print("----------------------------\n" +
-              "---> run into Exception <---\n" +
-              "----------------------------")
+        print("---> run into Exception:")
         print("---> " + str(e) + '\n')  # print exception message
         return 1
-
 
 # insert tuple to user
 # @param: String: username
@@ -181,7 +160,8 @@ def user_delete(username):
 # returns:
 #   -1 - email format doesn't match
 #   0 - successfully inserted
-#   1 - deletion failed
+#   1 - primary key violation
+#   2 - other violation
 def passenger_insert(username, email):
     email_regex = re.compile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
     if not email_regex.match(email):
@@ -196,50 +176,103 @@ def passenger_insert(username, email):
         return 0
 
     except Exception as e:
-        print("----------------------------\n" +
-              "---> run into Exception <---\n" +
-              "----------------------------")
+        print("---> run into Exception:")
         print("---> " + str(e) + '\n')  # print exception message
         if str(e)[1:5] == "1062":
             # primary key violation: Email
             return 1
-
+        else:
+            # other violations
+            return 2
 
 # insert tuples to Breezecard
 # @param: String: num (length 16 fixed)
 # @param: int: value
 # @param: String: BelongsTO
-def breezecard_insert(num, value, BelongsTo):
-    query = "INSERT INTO Breezecard(BreezecardNum, Value, BelongsTo) VALUES ('%s', '%d', '%s')"
-    try:
-        print("log :: executing Breezecard insertion query\n")
-        _cursor.execute(query % (num, value, BelongsTo))
-        _database.commit()
-        print("++ Successfully insert " + num + " into database ++\n")
-        return 0
+# returns:
+#   0 - successfully inserted
+#   1 - primary key violation
+#   2 - foreign key violation
+def bc_insert(num, value, BelongsTo=None):
+    if BelongsTo is None:
+        query = "INSERT INTO Breezecard(BreezecardNum, Value) VALUES ('%s', '%f')"
+        try:
+            print("log :: executing Breezecard insertion query\n")
+            _cursor.execute(query % (num, value))
+            _database.commit()
+            print("++ Successfully insert " + num + " into database ++\n")
+            return 0
 
-    except Exception as e:
-        print("----------------------------\n" +
-              "---> run into Exception <---\n" +
-              "----------------------------")
-        print("---> " + str(e) + '\n')  # print exception message
-        if str(e)[1:5] == "1062":
-            # primary key violation, breezecardNum
-            return 1
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            error = str(e)[1:5]
+            if error == "1062":
+                # primary key violation, breezecardNum
+                return 1
+            elif error == "1452":
+                # foreign key violation, BelongsTo
+                return 2
 
+    else:
+        query = "INSERT INTO Breezecard(BreezecardNum, Value, BelongsTO) VALUES ('%s', '%f', '%s')"
+        try:
+            print("log :: executing Breezecard insertion query\n")
+            _cursor.execute(query % (num, value, BelongsTo))
+            _database.commit()
+            print("++ Successfully insert " + num + " into database ++\n")
+            return 0
+
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            error = str(e)[1:5]
+            if error == "1062":
+                # primary key violation, breezecardNum
+                return 1
+            elif error == "1452":
+                # foreign key violation, BelongsTo
+                return 2
 
 # update breezecard value given breezecard num
 # @param: String: num (length 16 fixed)
 # @param: int: value
-def breezecard_update_value(num, value):
-    query = "UPDATE Breezecard SET Value = %d WHERE BreezecardNum = %s"
+# returns:
+#   0 - successfully updated
+#   1 - any exception
+def db_bc_update_value(num, value):
+    query = "UPDATE Breezecard SET Value = '%f' WHERE BreezecardNum = '%s'"
     try:
-        _cursor.execute(query, (value, num))
+        print("log :: executing Breezecard update query\n")
+        _cursor.execute(query % (value, num))
         _database.commit()
-    except Exception as e:
-        # TODO: see if some condition will break this query
-        return ""
+        print("++ Successfully update " + num + "'s value ++\n")
+        return 0
 
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
+
+# update breezecard holder given breezecard num
+# @param: String: num (length 16 fixed)
+# @param: String: BelongsTo
+# returns:
+#   0 - successfully updated
+#   1 - any exception
+def db_bc_update_holder(num, username):
+    query = "UPDATE Breezecard SET BelongsTo = '%s' WHERE BreezecardNum = '%s'"
+    try:
+        print("log :: executing Breezecard update query\n")
+        _cursor.execute(query % (username, num))
+        _database.commit()
+        print("++ Successfully update " + num + "'s holder ++\n")
+        return 0
+
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
 
 # insert tuples to Station
 # @param: String: StopID
@@ -247,65 +280,194 @@ def breezecard_update_value(num, value):
 # @param: int: EnterFare
 # @param: int: CloseStatus (0 or 1)
 # @param: int: IsTrain (1 or 0)
-def staion_insert(stopid, name, enterFare, ClosedStatus, isTrain):
-    query = "INSERT INTO Station(StopID, Name, EnterFare, ClosedStatus, IsTrain) VALUES (%s, %s, %d, %d, %d)"
+# returns:
+#   0 - successfully inserted
+#   1 - duplication key violation, StopID
+#   2 - any violation
+def station_insert(stopid, name, enterFare, ClosedStatus, isTrain):
+    query = "INSERT INTO Station(StopID, Name, EnterFare, ClosedStatus, IsTrain) VALUES ('%s', '%s', '%f', '%d', '%d')"
     try:
-        _cursor.execute(query, (stopid, name, enterFare, ClosedStatus, isTrain))
+        print("log :: executing station insertion query\n")
+        _cursor.execute(query % (stopid, name, enterFare, ClosedStatus, isTrain))
         _database.commit()
+        print("++ Successfully insert " + stopid + " into database++\n")
+        return 0
+
     except Exception as e:
-        if True:
-            # TODO: find the duplication condition
-            return "StopID duplication"
-        elif True:
-            # TODO: find name and isTrain uniqueness violation condition
-            return "Name and IsTrain uniqueness violation"
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        error = str(e)[1:5]
+        if error == "1062":
+            # duplication key violation, StopID / Name&IsTrain
+            return 1
+        else:
+            # other violations
+            return 2
 
+# retrieve station info
+#
+# returns
+#     a tuple of one station's info
+#     a tuple of a tuple of stations' info
+def db_station_retrieve(stopID=None):
+    if stopID is None:
+        query = "SELECT * FROM Station"
+        _cursor.execute(query)
+        res = _cursor.fetchall()
+        return res
+    else:
+        query = "SELECT * FROM Station WHERE StopID = '%s'"
+        _cursor.execute(query % stopID)
+        res = _cursor.fetchone()
+        _cursor.fetchall()
+        return res
 
-def busStationIntersection_insert(stopid, intersection):
-    query = "INSERT INTO BusStationIntersection(StopID, Intersection) VALUES (%s, %s)"
+# update the enter fare of a station
+#
+# returns
+#   0 - successfully updated
+#   1 - any violation
+def db_station_update_fare(stopID, fare):
+    query = "UPDATE Station SET EnterFare = '%f' WHERE StopID = '%s'"
     try:
-        _cursor.execute(query, (stopid, intersection))
+        print("log :: executing Station update query\n")
+        _cursor.execute(query % (fare, stopID))
         _database.commit()
-    except Exception as e:
-        if True:
-            # TODO: find the duplication condition
-            return "StopID duplication"
+        print("++ Successfully update " + stopID + "'s fare ++\n")
+        return 0
 
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
+
+# insert tuples to busStation
+# @param: String: StopID
+# @param: String: Intersection
+# returns:
+#   0 - successfully inserted
+#   1 - duplication key violation, StopID
+#   2 - other violation
+def busStationIntersection_insert(stopid, intersection=None):
+    if intersection is None:
+        query = "INSERT INTO BusStationIntersection(StopID) VALUES ('%s')"
+        try:
+            print("log :: executing busStation insertion query\n")
+            _cursor.execute(query % stopid)
+            _database.commit()
+            print("++ Successfully insert " + stopid + " into database++\n")
+            return 0
+
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            error = str(e)[1:5]
+            if error == "1062":
+                # duplication key violation, StopID
+                return 1
+            else:
+                # other violations
+                return 2
+    else:
+        query = "INSERT INTO BusStationIntersection(StopID, Intersection) VALUES ('%s', '%s')"
+        try:
+            print("log :: executing busStation insertion query\n")
+            _cursor.execute(query % (stopid, intersection))
+            _database.commit()
+            print("++ Successfully insert " + stopid + " into database++\n")
+            return 0
+
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            error = str(e)[1:5]
+            if error == "1062":
+                # duplication key violation, StopID
+                return 1
+            else:
+                # other violation
+                return 2
 
 # insert tuples to Conflict
 # @param: String: Username
 # @param: String: BreezecardNum
 # @param: String: Datetime
+#   0 - successfully inserted
+#   1 - duplication key violation
+#   2 - other violation
 def conflict_insert(username, BreezeCardNum, DateTime):
     # TODO: check the instance of TimeStamp
-    query = "INSERT INTO Conflict(Username, BreezecardNum, DataTime) VALUES (%s, %s, %s)"
+    query = "INSERT INTO Conflict(Username, BreezecardNum, DataTime) VALUES ('%s', '%s', convert(datetime, %s, 5))"
     try:
-        _cursor.execute(query, (username, BreezeCardNum, DateTime))
+        print("log :: executing conflict insertion query\n")
+        _cursor.execute(query % (username, BreezeCardNum, DateTime))
         _database.commit()
+        print("++ Successfully insert " + username + " into database++\n")
+        return 0
+
     except Exception as e:
-        if True:
-            # TODO: find the duplication condition
-            return "Username or BreezecardNum duplication"
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        error = str(e)[1:5]
+        if error == "1062":
+            # duplication key violation
+            return 1
+        else:
+            # other violations
+            return 2
 
 # insert tuples to Trip
 # @param: int: Tripfare
 # @param: String: StartTime
 # @param: String: BreezecardNum
 # @param: String: StartsAt
-def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt):
+# @param: String: EndsAt
+#   0 - successfully inserted
+#   1 - duplication key violation
+#   2 - other violation
+def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt=None):
     # TODO: check the instance of TimeStamp
-    query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt) VALUES (%d, %s, %s, %s)"
-    try:
-        _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
-        _database.commit()
-    except Exception as e:
-        if True:
-            # TODO: find the duplication condition
-            return "StartTime or BreezecardNum duplication"
+    if EndsAt is None:
+        query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt) VALUES ('%s', '%s', '%s', '%s')"
+        try:
+            print("log :: executing trip insertion query\n")
+            _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
+            _database.commit()
+            print("++ Successfully insert " + BreezecardNum + " into database++\n")
+            return 0
 
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            error = str(e)[1:5]
+            if error == "1062":
+                # duplication key violation
+                return 1
+            else:
+                # other violations
+                return 2
+    else:
+        query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt) VALUES ('%s', '%s', '%s', '%s', '%s')"
+        try:
+            print("log :: executing trip insertion query\n")
+            _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
+            _database.commit()
+            print("++ Successfully insert " + BreezecardNum + " into database++\n")
+            return 0
+
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            error = str(e)[1:5]
+            if error == "1062":
+                # duplication key violation
+                return 1
+            else:
+                # other violations
+                return 2
 
 
 # Executions:
 set_connection()
-user_delete("123")
-turnoff_connection()
+print station_retrieve('N11')
+close_connection()
