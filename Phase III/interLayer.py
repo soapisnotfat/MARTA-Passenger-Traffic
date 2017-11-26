@@ -2,6 +2,8 @@ from database import *
 import hashlib
 import random
 
+#Globals
+inTrip = False
 
 '''
 register function that inserts tuples to database
@@ -97,7 +99,6 @@ assign a new user to a breezecard
     1 - any violation
 '''
 def bc_change_user(num, username):
-    # TODO: test needed
     # set up connection
     set_connection()
 
@@ -117,7 +118,6 @@ change a breezecard's value
     1 - any violation
 '''
 def bc_change_value(num, value):
-    # TODO: test needed
     # set up connection
     set_connection()
 
@@ -128,6 +128,47 @@ def bc_change_value(num, value):
     close_connection()
 
     return update_status
+
+'''
+add a certain value to a breezecard
+
+:returns
+    0 - successfully added value
+    1 - any violation
+'''
+def bc_add_value(num, value):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    current_card = db_bc_info(num)
+    if current_card is None:
+        return 1
+    current_value = float(current_card[1])
+    update_status = db_bc_update_value(num, current_value + value)
+
+    # close connection
+    close_connection()
+
+    return update_status
+
+'''
+return a tuple of a breezecard's info
+
+:return
+    a tuple of a breezecard's info
+'''
+def bc_info(num):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    out = db_bc_info(num)
+
+    # close connection
+    close_connection()
+
+    return out
 
 '''
 generate a usable breezecard number
@@ -175,7 +216,6 @@ return a tuple of a station's info
     a tuple of a station's info
 '''
 def station_info(stopID):
-    # TODO: test needed
     # set up connection
     set_connection()
 
@@ -188,6 +228,12 @@ def station_info(stopID):
     return out
 
 '''
+return enterfare of staion
+'''
+def station_fare(stopID):
+    return float(station_info(stopID)[2])
+
+'''
 update the fare of station fare
 
 :returns
@@ -195,7 +241,6 @@ update the fare of station fare
     1 - any violation
 '''
 def station_update_fare(stopID, fare):
-    # TODO: test needed
     # set up connection
     set_connection()
 
@@ -206,4 +251,31 @@ def station_update_fare(stopID, fare):
     close_connection()
 
     return update_status
+
+'''
+starting a trip
+
+:returns
+    0 - successfully started a trip
+    1 - any violation
+    2 - in a trip
+'''
+def take_trip(bcNum, startID):
+    if inTrip:
+        return 2
+    
+    # set up connection
+    set_connection()
+
+    # execute the query
+
+
+    # close connection
+    close_connection()
+
+
+'''
+End the trip
+'''
+def end_trip():
 

@@ -467,7 +467,6 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt=None):
                 return 2
 
 
-# Executions:
-set_connection()
-print station_retrieve('N11')
-close_connection()
+# # Executions:
+# set_connection()
+# close_connection()
