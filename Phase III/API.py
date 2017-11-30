@@ -56,7 +56,7 @@ def login(username, password):
     return login_response
 
 '''
-user adds breezecard 
+user adds breezecard
 - used for register page, in add breezecard section
 :returns
     0 - the card doesn't exist
@@ -263,7 +263,7 @@ starting a trip
 def take_trip(bcNum, startID):
     if inTrip:
         return 2
-    
+
     # set up connection
     set_connection()
 
@@ -278,4 +278,5 @@ def take_trip(bcNum, startID):
 End the trip
 '''
 def end_trip():
+    # TODO: ??
 

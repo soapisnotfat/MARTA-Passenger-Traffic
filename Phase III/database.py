@@ -1,7 +1,7 @@
 from datetime import datetime
 import pymysql
-import re
 import traceback
+from constraint import *
 
 
 # Global variables
@@ -26,7 +26,7 @@ def set_connection():
                                         user="cs4400_Group_91",
                                         passwd="_OY4gwQs",
                                         db="cs4400_Group_91")
-                    
+
             print("*    Connections should be ready to go     *")
             _cursor = _database.cursor()
             _connected = True
@@ -163,8 +163,7 @@ def user_delete(username):
 #   1 - primary key violation
 #   2 - other violation
 def passenger_insert(username, email):
-    email_regex = re.compile("(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
-    if not email_regex.match(email):
+    if not constraint_email_format(email):
         return -1
 
     query = "INSERT INTO Passenger(Username, Email) VALUES ('%s', '%s')"
