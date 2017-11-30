@@ -1,4 +1,5 @@
 from database import *
+from constraint import *
 import hashlib
 import random
 
@@ -8,11 +9,24 @@ inTrip = False
 '''
 register function that inserts tuples to database
 
-:returns
+returns
     1 - register successfully
+    98 - username doesn't match regex
+    99 - password doesn't match regex
+    100 - email doesn't match regex
     other - violation caught
 '''
 def register(username, password, email):
+    if constraint_username_format(username) == 0:
+        # username doesn't match regex
+        return 98
+    if constraint_password_format(password) == 0:
+        # password doesn't match regex
+        return 99
+    if constraint_email_format(email) == 0:
+        # email doesn't match regex
+        return 100
+
     # set up connection
     set_connection()
 
@@ -251,6 +265,15 @@ def station_update_fare(stopID, fare):
     close_connection()
 
     return update_status
+
+'''
+return  the passenger flow in a specific time span
+'''
+def passenger_flow(startTime, EndsTime, stopID=None):
+    if stopID is None:
+        # TODO: emmm...
+    else:
+        # TODO: emmm...
 
 '''
 starting a trip

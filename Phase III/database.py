@@ -1,7 +1,6 @@
 from datetime import datetime
 import pymysql
 import traceback
-from constraint import *
 
 
 # Global variables
@@ -158,14 +157,10 @@ def user_delete(username):
 # @param: String: username
 # @param: String: email
 # returns:
-#   -1 - email format doesn't match
 #   0 - successfully inserted
 #   1 - primary key violation
 #   2 - other violation
 def passenger_insert(username, email):
-    if not constraint_email_format(email):
-        return -1
-
     query = "INSERT INTO Passenger(Username, Email) VALUES ('%s', '%s')"
     try:
         print("log :: executing passenger insertion query\n")
@@ -307,7 +302,7 @@ def station_insert(stopid, name, enterFare, ClosedStatus, isTrain):
 #
 # returns
 #     a tuple of one station's info
-#     a tuple of a tuple of stations' info
+#     a tuple of tuples of stations' info
 def db_station_retrieve(stopID=None):
     if stopID is None:
         query = "SELECT * FROM Station"
@@ -394,12 +389,11 @@ def busStationIntersection_insert(stopid, intersection=None):
 #   0 - successfully inserted
 #   1 - duplication key violation
 #   2 - other violation
-def conflict_insert(username, BreezeCardNum, DateTime):
-    # TODO: check the instance of TimeStamp
-    query = "INSERT INTO Conflict(Username, BreezecardNum, DataTime) VALUES ('%s', '%s', convert(datetime, %s, 5))"
+def conflict_insert(username, BreezeCardNum, DateAndTime):
+    query = "INSERT INTO Conflict(Username, BreezecardNum, DateAndTime) VALUES ('%s', '%s', '%s')"
     try:
         print("log :: executing conflict insertion query\n")
-        _cursor.execute(query % (username, BreezeCardNum, DateTime))
+        _cursor.execute(query % (username, BreezeCardNum, DateAndTime))
         _database.commit()
         print("++ Successfully insert " + username + " into database++\n")
         return 0
@@ -416,7 +410,7 @@ def conflict_insert(username, BreezeCardNum, DateTime):
             return 2
 
 # insert tuples to Trip
-# @param: int: Tripfare
+# @param: float: Tripfare
 # @param: String: StartTime
 # @param: String: BreezecardNum
 # @param: String: StartsAt
@@ -425,12 +419,11 @@ def conflict_insert(username, BreezeCardNum, DateTime):
 #   1 - duplication key violation
 #   2 - other violation
 def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt=None):
-    # TODO: check the instance of TimeStamp
     if EndsAt is None:
-        query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt) VALUES ('%s', '%s', '%s', '%s')"
+        query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt) VALUES ('%f', '%s', '%s', '%s')"
         try:
             print("log :: executing trip insertion query\n")
-            _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
+            _cursor.execute(query % (Tripfare, StartTime, BreezecardNum, StartsAt))
             _database.commit()
             print("++ Successfully insert " + BreezecardNum + " into database++\n")
             return 0
@@ -446,10 +439,10 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt=None):
                 # other violations
                 return 2
     else:
-        query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt) VALUES ('%s', '%s', '%s', '%s', '%s')"
+        query = "INSERT INTO Trip(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt) VALUES ('%f', '%s', '%s', '%s', '%s')"
         try:
             print("log :: executing trip insertion query\n")
-            _cursor.execute(query, (Tripfare, StartTime, BreezecardNum, StartsAt))
+            _cursor.execute(query % (Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt))
             _database.commit()
             print("++ Successfully insert " + BreezecardNum + " into database++\n")
             return 0
@@ -465,7 +458,18 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt=None):
                 # other violations
                 return 2
 
+# retrieve Trip info
+#
+# returns
+#   a tuple of one trip's info
+#   a tuple of tuples of station's info
+def db_trip_retrieve():
+    query = "SELECT * FROM Trip"
+    _cursor.execute(query)
+    res = _cursor.fetchall()
+    return res
 
-# # Executions:
-# set_connection()
-# close_connection()
+# Executions:
+set_connection()
+
+close_connection()
