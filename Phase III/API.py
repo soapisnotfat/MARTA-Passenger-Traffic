@@ -3,8 +3,6 @@ from constraint import *
 import hashlib
 import random
 
-#Globals
-inTrip = False
 
 '''
 register function that inserts tuples to database
@@ -277,6 +275,24 @@ return  the passenger flow in a specific time span
 #     return 0
 
 '''
+returns
+True: if user is in trip
+        (True, (Decimal('1.00'), datetime.datetime(2017, 10, 31, 21, 30), '1325138309325420', 'FP', None))
+False: if user is not in trip
+        (False, None)
+'''
+def inTrip(username):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    instance = db_user_inTrip(username)
+    # close connection
+    close_connection()
+
+    return instance
+
+'''
 starting a trip
 
 :returns
@@ -285,9 +301,6 @@ starting a trip
     2 - in a trip
 '''
 def take_trip(bcNum, startID):
-    if inTrip:
-        return 2
-
     # set up connection
     set_connection()
 

@@ -106,6 +106,31 @@ def db_bc_info(num):
     _cursor.fetchall()
     return res
 
+# returns
+#   the bc of one user
+def db_user_bc_num(username):
+    query = "SELECT BreezecardNum FROM Breezecard WHERE BelongsTo = '%s'"
+    _cursor.execute(query % username)
+    res = _cursor.fetchall()
+    out = []
+    for item in res:
+        out.append(list(item)[0])
+    return out
+
+# returns
+# True: if user is in trip
+#     (True, (Decimal('1.00'), datetime.datetime(2017, 10, 31, 21, 30), '1325138309325420', 'FP', None))
+# False: if user is not in trip
+#     (False, None)
+def db_user_inTrip(username):
+    bc = db_user_bc_num(username)
+    for num in bc:
+        info = db_trip_retrieve(num)
+        for trip in info:
+            if trip[-1] is None:
+                return True, trip
+    return False, None
+
 # insert tuples to user
 # @param: String: username
 # @param: String: Password
@@ -303,6 +328,7 @@ def station_insert(stopid, name, enterFare, ClosedStatus, isTrain):
 # returns
 #     a tuple of one station's info
 #     a tuple of tuples of stations' info
+# format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
 def db_station_retrieve(stopID=None):
     if stopID is None:
         query = "SELECT * FROM Station"
@@ -463,13 +489,19 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt=None):
 # returns
 #   a tuple of one trip's info
 #   a tuple of tuples of station's info
-def db_trip_retrieve():
-    query = "SELECT * FROM Trip"
-    _cursor.execute(query)
-    res = _cursor.fetchall()
-    return res
+def db_trip_retrieve(bcNum=None):
+    if bcNum is None:
+        query = "SELECT * FROM Trip"
+        _cursor.execute(query)
+        res = _cursor.fetchall()
+        return res
+    else:
+        query = "SELECT * FROM Trip WHERE BreezecardNum = '%s'"
+        _cursor.execute(query % bcNum)
+        res = _cursor.fetchall()
+        return res
 
 # Executions:
-# set_connection()
-#
-# close_connection()
+set_connection()
+print(db_station_retrieve('31955'))
+close_connection()
