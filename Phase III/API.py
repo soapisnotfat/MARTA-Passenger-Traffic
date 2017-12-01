@@ -3,8 +3,6 @@ from constraint import *
 import hashlib
 import random
 
-#Globals
-inTrip = False
 
 '''
 register function that inserts tuples to database
@@ -17,15 +15,15 @@ returns
     other - violation caught
 '''
 def register(username, password, email):
-    if constraint_username_format(username) == 0:
-        # username doesn't match regex
-        return 98
-    if constraint_password_format(password) == 0:
-        # password doesn't match regex
-        return 99
-    if constraint_email_format(email) == 0:
-        # email doesn't match regex
-        return 100
+    # if constraint_username_format(username) == 0:
+    #     # username doesn't match regex
+    #     return 98
+    # if constraint_password_format(password) == 0:
+    #     # password doesn't match regex
+    #     return 99
+    # if constraint_email_format(email) == 0:
+    #     # email doesn't match regex
+    #     return 100
 
     # set up connection
     set_connection()
@@ -269,11 +267,30 @@ def station_update_fare(stopID, fare):
 '''
 return  the passenger flow in a specific time span
 '''
-def passenger_flow(startTime, EndsTime, stopID=None):
-    if stopID is None:
-        # TODO: emmm...
-    else:
-        # TODO: emmm...
+# def passenger_flow(startTime, EndsTime, stopID=None):
+# if stopID is None:
+#     # TODO: emmm...
+# else:
+#     # TODO: emmm...
+#     return 0
+
+'''
+returns
+True: if user is in trip
+        (True, (Decimal('1.00'), datetime.datetime(2017, 10, 31, 21, 30), '1325138309325420', 'FP', None))
+False: if user is not in trip
+        (False, None)
+'''
+def inTrip(username):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    instance = db_user_inTrip(username)
+    # close connection
+    close_connection()
+
+    return instance
 
 '''
 starting a trip
@@ -284,9 +301,6 @@ starting a trip
     2 - in a trip
 '''
 def take_trip(bcNum, startID):
-    if inTrip:
-        return 2
-
     # set up connection
     set_connection()
 
@@ -300,6 +314,7 @@ def take_trip(bcNum, startID):
 '''
 End the trip
 '''
-def end_trip():
-    # TODO: ??
+# def end_trip():
+#     # TODO: ??
 
+print login('admin', 'admin133')
