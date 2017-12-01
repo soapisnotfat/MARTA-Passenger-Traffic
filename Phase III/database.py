@@ -502,6 +502,6 @@ def db_trip_retrieve(bcNum=None):
         return res
 
 # Executions:
-set_connection()
-print(db_station_retrieve('31955'))
-close_connection()
+# set_connection()
+# print(db_station_retrieve('31955'))
+# close_connection()

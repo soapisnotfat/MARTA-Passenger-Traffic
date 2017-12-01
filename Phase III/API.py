@@ -89,6 +89,7 @@ def add_breezecard(num, username):
         if bc_info[2] is not None:
             # conflict caught
             print("conflict caught")
+            # TODO: add conflict to database
             out = 1
         else:
             # update new holder
@@ -240,7 +241,7 @@ def station_info(stopID):
     return out
 
 '''
-return enterfare of staion
+return enterfare of station
 '''
 def station_fare(stopID):
     return float(station_info(stopID)[2])
@@ -265,14 +266,75 @@ def station_update_fare(stopID, fare):
     return update_status
 
 '''
-return  the passenger flow in a specific time span
+return the passenger flow in a specific time span
+
+format: 
+ stopID, Flow-in, Flow-out, Flow-net, Revenue
+('31955',   0,        0,        0,      0.0),
+('35161',   0,        0,        0,      0.0)
 '''
-# def passenger_flow(startTime, EndsTime, stopID=None):
-# if stopID is None:
-#     # TODO: emmm...
-# else:
-#     # TODO: emmm...
-#     return 0
+def passenger_flow(startsTime=None, endsTime=None):
+    # set up connection
+    set_connection()
+    # execute the query
+    trips = db_trip_retrieve()
+    stations = db_station_retrieve()
+    # close connection
+    close_connection()
+
+    # initialize flow_in and flow-out
+    station_name = [item[0] for item in stations]
+    flow_in = {}
+    flow_out = {}
+    for item in station_name:
+        flow_in[item] = 0
+        flow_out[item] = 0
+
+    # update flow_in and flow-out based on conditions
+    if startsTime is None and endsTime is None:
+        for t in trips:
+            flow_in[t[-2]] += 1
+            if t[-1] is not None:
+                flow_out[t[-1]] += 1
+    elif endsTime is None and startsTime is not None:
+        for t in trips:
+            if startsTime < str(t[1]):
+                flow_in[t[-2]] += 1
+                if t[-1] is not None:
+                    flow_out[t[-1]] += 1
+    else:
+        for t in trips:
+            if startsTime < str(t[1]) < endsTime:
+                flow_in[t[-2]] += 1
+                if t[-1] is not None:
+                    flow_out[t[-1]] += 1
+
+    # calculate flow_net and revenue based on flow_in and flow-out
+    flow_net = {}
+    revenue = {}
+    for s in station_name:
+        flow_net[s] = flow_in[s] - flow_out[s]
+        fare = 0
+        for i in stations:
+            if i[0] == s:
+                fare = float(i[2])
+        revenue[s] = flow_in[s] * fare
+
+    # put all together
+    out = []
+    for i in station_name:
+        out.append((i, flow_in[i], flow_out[i], flow_net[i], revenue[i]))
+
+    return tuple(out)
+
+'''
+return trip history in a specific time span
+
+format:
+
+'''
+def trip_history(username):
+    return 0
 
 '''
 returns
@@ -287,6 +349,7 @@ def inTrip(username):
 
     # execute the query
     instance = db_user_inTrip(username)
+
     # close connection
     close_connection()
 
@@ -317,4 +380,3 @@ End the trip
 # def end_trip():
 #     # TODO: ??
 
-print login('admin', 'admin133')
