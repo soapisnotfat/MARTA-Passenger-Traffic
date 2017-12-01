@@ -17,15 +17,15 @@ returns
     other - violation caught
 '''
 def register(username, password, email):
-    if constraint_username_format(username) == 0:
-        # username doesn't match regex
-        return 98
-    if constraint_password_format(password) == 0:
-        # password doesn't match regex
-        return 99
-    if constraint_email_format(email) == 0:
-        # email doesn't match regex
-        return 100
+    # if constraint_username_format(username) == 0:
+    #     # username doesn't match regex
+    #     return 98
+    # if constraint_password_format(password) == 0:
+    #     # password doesn't match regex
+    #     return 99
+    # if constraint_email_format(email) == 0:
+    #     # email doesn't match regex
+    #     return 100
 
     # set up connection
     set_connection()
@@ -269,11 +269,12 @@ def station_update_fare(stopID, fare):
 '''
 return  the passenger flow in a specific time span
 '''
-def passenger_flow(startTime, EndsTime, stopID=None):
-    if stopID is None:
-        # TODO: emmm...
-    else:
-        # TODO: emmm...
+# def passenger_flow(startTime, EndsTime, stopID=None):
+# if stopID is None:
+#     # TODO: emmm...
+# else:
+#     # TODO: emmm...
+#     return 0
 
 '''
 starting a trip
@@ -300,6 +301,7 @@ def take_trip(bcNum, startID):
 '''
 End the trip
 '''
-def end_trip():
-    # TODO: ??
+# def end_trip():
+#     # TODO: ??
 
+print login('admin', 'admin133')

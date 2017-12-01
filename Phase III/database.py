@@ -470,6 +470,6 @@ def db_trip_retrieve():
     return res
 
 # Executions:
-set_connection()
-
-close_connection()
+# set_connection()
+#
+# close_connection()
