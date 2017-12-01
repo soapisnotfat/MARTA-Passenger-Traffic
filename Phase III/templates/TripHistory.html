@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trip History Information</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body style="padding: 3% 5% 5% 5%; width: 80%">
+    <h1>Trip History Information</h1>
+    <br>
+    Trips within:<br>
+    <table class="table table-hover">
+        <thead>
+          <tr>
+              <td>Start Time</td>
+              <td>End Time</td>
+          </tr>
+        </thead>
+        <tbody>
+        {% for o in trips %}
+          <tr>
+                <td>{{ o["time"] }}</td>
+                <td>{{ o["source"] }}</td>
+                <td>{{ o["designation"] }}</td>
+                <td>{{ o["farePaid"] }}</td>
+                <td>{{ o["cardNum"] }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

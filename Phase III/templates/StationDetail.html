@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{info["StationName"]}}</title>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body style="padding: 3% 5% 5% 5%; width: 80%">
+    <h1>{{info["StationName"]}}</h1>
+    <p>
+        Fare: {{info["fare"]}}<br>
+        Nearest Intersection: {{info["intersection"]}}<br>
+        Status: {{info["Status"]}}<br>
+        Stop ID: {{info["stopID"]}}<br>
+    </p>
+    <a class=" btn btn-default" href="/to_event_search" role="button">Go Back</a>
+
+</body>
+</html>

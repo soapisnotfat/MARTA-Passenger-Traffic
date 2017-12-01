@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{Passenger Flow Report}}</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body style="padding: 3% 5% 5% 5%; width: 80%">
+    <h1>Passenger Flow Report</h1>
+    <br>
+    Passengers within:<br>
+    <table class="table table-hover">
+        <thead>
+          <tr>
+              <td>Start Time</td>
+              <td>End Time</td>
+          </tr>
+        </thead>
+        <tbody>
+        {% for o in passengers %}
+          <tr>
+                <td>{{ o["stationName"] }}</td>
+                <td>{{ o["passIn"] }}</td>
+                <td>{{ o["passOut"] }}</td>
+                <td>{{ o["flow"] }}</td>
+                <td>{{ o["revenue"] }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a class=" btn btn-default" href="/to_city_search" role="button">Go Back</a>
+
+</body>
+</html>

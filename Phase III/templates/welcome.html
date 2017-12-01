@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>Welcome To MARTA</title>
+</head>
+<body>
+<div style="padding: 3% 5% 5% 5%; width: 80%">
+    <h1>Welcome To MARTA</h1>
+    <div class="container-fluid">
+        <form class="form-group" action="add_city" method="post" enctype="multipart/form-data">
+
+            <label for="country">BreezeCard Number:</label>
+            <select name="country" class="form-control" id="country" required>
+                {% for o in breezeCards %}
+                    <option value="{{ o }}" SELECTED>{{ o }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="city">Balance:</label>
+            <input type="text" name="city" class="form-control" id="city" maxlength="32" required>
+
+            <label for="country">Start At:</label>
+            <select name="country" class="form-control" id="country" required>
+                {% for o in startTime %}
+                    <option value="{{ o }}" SELECTED>{{ o }}</option>
+                {% endfor %}
+            </select>
+
+
+            <label for="country">End At:</label>
+            <select name="country" class="form-control" id="country" required>
+                {% for o in endTime %}
+                    <option value="{{ o }}" SELECTED>{{ o }}</option>
+                {% endfor %}
+            </select>
+
+            <button id="btnSignIn" class="btn btn-primary" type="submit">View Trip History</button>
+            <a class=" btn btn-danger" href="to_login" role="button">Log out</a>
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
