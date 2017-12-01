@@ -2,28 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{city}}</title>
+    <title>Breeze Card Management</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 <body style="padding: 3% 5% 5% 5%; width: 80%">
-    <h1>{{city}}</h1>
-    <p>
-        Name: {{info["name"]}}<br>
-        Country: {{info["country"]}}<br>
-        GPS: {{info["gps"]}}<br>
-        Population: {{info["population"]}}<br>
-        Languages: {{info["languages"]}}<br>
-        Avg Score: {{info["score"]}}<br>
-    </p>
+    <h1>Breeze Card Management</h1>
     <br>
     Locations within:<br>
     <table class="table table-hover">
         <thead>
           <tr>
               <td>Name</td>
-              <td>Type</td>
-              <td>Cost</td>
-              <td>Score</td>
+              <td>Card Value</td>
+              <td>Value</td>
           </tr>
         </thead>
         <tbody>
@@ -65,8 +56,6 @@
     <br>
     <a class=" btn btn-primary" href="{{ url_for('to_write_reviews_single', subject=info['name']) }}" role="button">Write Review</a>
     <a class=" btn btn-default" href="/to_city_search" role="button">Go Back</a>
-
-
 
 </body>
 </html>

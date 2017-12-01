@@ -6,18 +6,7 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 <body style="padding: 3% 5% 5% 5%; width: 80%">
-    <h1>{{info["Station Information"]}}</h1>
-    <p>
-        Name: {{info["name"]}}<br>
-        Location: {{info["location"]}}<br>
-        Date: {{info["date"]}}<br>
-        Start Time: {{info["starttime"]}}<br>
-        End Time: {{info["endtime"]}}<br>
-        Cost: {{info["cost"]}}<br>
-        Student Discount: {{info["std_discount"]}}<br>
-        Category: {{info["category"]}}<br>
-        Avg Score: {{info["score"]}}<br>
-    </p>
+    <h1>Station Information</h1>
     <br>
     <table class="table table-hover">
         <thead>
@@ -39,7 +28,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <p style="color: red">{{m1}}</p>
+
     <br>
     <a class=" btn btn-primary" href="{{ url_for('to_write_reviews_single', subject=info['name'] + ', ' +
         info['location'] + ', ' + info['date'] + ', ' + info['starttime'] ) }}" role="button">Create New Station</a>

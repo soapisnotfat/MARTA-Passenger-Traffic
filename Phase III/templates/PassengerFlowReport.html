@@ -2,21 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{Passenger Flow Report}}</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>Passenger Flow Report</title>
 </head>
-<body style="padding: 3% 5% 5% 5%; width: 80%">
-    <h1>Passenger Flow Report</h1>
-    <br>
-    Passengers within:<br>
-    <table class="table table-hover">
+<body>
+<div class="container">
+      <h2>Passenger Flow Report</h2>
+      <label for="pwd">Start Time</label>
+      <input type="text" name="usr" id="usr" class="form-control" placeholder="startTime" required autofocus>
+
+      <label for="pwd">End Time</label>
+      <input type="text" name="usr" id="usr" class="form-control" placeholder="endTime" required autofocus>
+
+      <a class=" btn btn-primary" href="{{ url_for('to_write_reviews_single', subject=info['name']) }}" role="button">Update</a>
+      <a class=" btn btn-default" href="/to_city_search" role="button">Reset</a>
+
+
+      <table class="table table-hover">
         <thead>
           <tr>
-              <td>Start Time</td>
-              <td>End Time</td>
+              <td>Station Name</td>
+              <td>Numeber Passenger In</td>
+              <td>Number Passenger Out</td>
+              <td>Flow</td>
+              <td>Revenue</td>
           </tr>
         </thead>
-        <tbody>
         {% for o in passengers %}
           <tr>
                 <td>{{ o["stationName"] }}</td>
@@ -27,8 +38,10 @@
           </tr>
         {% endfor %}
         </tbody>
-    </table>
-    <a class=" btn btn-default" href="/to_city_search" role="button">Go Back</a>
+      </table>
+    <br>
+    <a class=" btn btn-default" href="to_city_search" role="button">Go Back</a>
+    </div>
 
 </body>
 </html>
