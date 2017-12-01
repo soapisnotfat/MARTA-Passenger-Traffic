@@ -1,4 +1,5 @@
 import API
+from database import *
 from flask import Flask, render_template, json, request, Response
 
 app = Flask(__name__)
@@ -13,6 +14,7 @@ def main():
     """
     # TODO: check whether set up database
     # db.setupConnection()
+    set_connection()
     return render_template('login.html')
 
 @app.route("/to_login")
@@ -67,6 +69,7 @@ def register():
         email = request.form['email']
         p1 = request.form['p1']
         p2 = request.form['p2']
+        buzzcard = request.form['withCard']
 
         error = "Passwords do not match"
         if p1 != p2:
@@ -75,16 +78,19 @@ def register():
             error = "Password must be six or more characters"
             return render_template("register.html", error=error)
         else:
+            if buzzcard == "withoutCard":
+                num = generate_bc()
+            else:
+                num = request.form['BreezeCardNum']
+            add_breezecard(num, name)
             result = register(name, p1, email)
-            if result == 0:
+            if result == 1:
                 global logged_user
                 logged_user = name
                 return render_template("homepage.html")
-            elif reg == 1:
-                error = "Username already taken"
-            elif reg == 2:
-                error = "Email already taken"
             else:
                 error = "Unknown error occurred"
-
             return render_template("register.html", error=error)
+
+if __name__ == '__main__':
+    app.run()
