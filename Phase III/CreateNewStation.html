@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>Create New Station</title>
+</head>
+<body>
+<div style="padding: 3% 5% 5% 5%; width: 80%">
+    <h1>Create New Station</h1>
+    <div class="container-fluid">
+        <form class="form-group" action="add_city" method="post" enctype="multipart/form-data">
+            <label for="city">Station Name:</label>
+            <input type="text" name="city" class="form-control" id="city" maxlength="32" required>
+
+            <label for="city">Stop ID:</label>
+            <input type="text" name="city" class="form-control" id="city" maxlength="32" required>
+
+            <label for="city">Enter Fare:</label>
+            <input type="text" name="city" class="form-control" id="city" maxlength="32" required>
+
+            <form action=" ">
+                <input type="radio" name="Bus" value="Bus" font:24px>Bus Station<br>
+                    <label for="BreezeCardNum">Nearest Intersection: </label> 
+                    <input type="text" class="form-control" name="BreezeCardNum" id="BreezeCardNum" style="width:20%">
+                <input type="radio" name="Train" value="Train" font:24px>Train Station<br>
+            </form>
+
+            <label for="country">Station Status:</label>
+            <select name="country" class="form-control" id="country" required>
+                {% for o in countries %}
+                    <option value="Bus Station" SELECTED>Open</option>
+                    <option value="Train Station">Closed</option>
+                {% endfor %}
+            </select>
+
+            <br>
+            <button id="btnSignIn" class="btn btn-primary" type="submit">Create Station</button>
+            <a class=" btn btn-danger" href="to_login" role="button">Sign out</a>
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

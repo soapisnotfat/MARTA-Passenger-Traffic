@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script src="../static/js/login.js"></script>
+
+    <!--<script src="../Scripts/login.js"></script>-->
+
+    <title>Login</title>
+</head>
+<body>
+<div align=center class="container-fluid">
+    <h1> MARTA System Sign in </h1>
+
+    <form class="form-group" style="width:20%" action="sign_in" method="post" enctype="multipart/form-data">
+        <label for="usr">Username</label>
+        <input type="text" name="usr" id="usr" class="form-control" placeholder="Name" required autofocus>
+        <br>
+        <label for="pwd">Password</label>
+        <input type="password" name="pwd" id="pwd" class="form-control" placeholder="Password" required>
+        <br>
+
+        <button id="btnSignIn" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <br>
+        <a class=" btn btn-default" href="to_register" role="button">Register</a>
+
+
+      </form>
+
+</div>
+
+</body>
+</html>

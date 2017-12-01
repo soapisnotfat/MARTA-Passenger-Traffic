@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <title>Register</title>
+    <script src="../Scripts/register.js"></script>
+</head>
+<body>
+<form class="container-fluid" action="register" method="post">
+    <h1> Register </h1>
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" name="username" id="username" style="width:20%">
+
+        <label for="email">Email Address: </label> *
+        <input type="text" class="form-control" name="email" id="email" style="width:20%">
+
+        <label for="p1">Password:</label>
+        <input type="password" class="form-control" name="p1" id="p1" style="width:20%">
+
+        <label for="p2">Confirm Password:</label>
+        <input type="password" class="form-control" name="p2" id="p2" style="width:20%">
+
+        <form action=" ">
+            <input type="radio" name="withCard" value="withCard" font:24px> Use My Existing Breeze Card<br>
+                <label for="BreezeCardNum">Breeze Card Number: </label> 
+                <input type="text" class="form-control" name="BreezeCardNum" id="BreezeCardNum" style="width:20%">
+            <input type="radio" name="withoutCard" value="withoutCard" font:24px> Get a New Breeze Card<br>
+        </form>
+
+    </div>
+
+    <button class="btn btn-primary" id="register" type="submit">Register</button>
+    <a class=" btn btn-default" href="to_login" role="button">Cancel</a>
+
+    <br>
+    <br>
+
+</form>
+</body>
