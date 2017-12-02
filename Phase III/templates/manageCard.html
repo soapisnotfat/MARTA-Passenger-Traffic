@@ -31,9 +31,11 @@
         <tbody>
         {% for o in breezeCard %}
           <tr>
-                <td>{{ o["cardNum"] }}</td>
-                <td>{{ o["value"] }}</td>
-                <td>{{ o["removal"] }}</td>
+                <td>{{ o[0] }}</td>
+                <td>{{ o[1] }}</td>
+                <td>
+                  <button class="btn btn-default btn-xs" type="submit">Remove</button>
+                </td>
           </tr>
         {% endfor %}
         </tbody>
