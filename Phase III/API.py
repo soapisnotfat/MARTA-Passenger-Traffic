@@ -302,9 +302,8 @@ def insert_station(stopid, name, enterFare, ClosedStatus, isTrain):
 return the passenger flow in a specific time span
 
 format:
- stopID, Flow-in, Flow-out, Flow-net, Revenue
-('31955',   0,        0,        0,      0.0),
-('35161',   0,        0,        0,      0.0)
+ stopNAME, Flow-in, Flow-out, Flow-net, Revenue
+('Old Milton Pkwy - North Point Pkwy',   0,        0,        0,      0.0),
 '''
 def passenger_flow(startsTime=None, endsTime=None):
     # set up connection
@@ -316,12 +315,15 @@ def passenger_flow(startsTime=None, endsTime=None):
     close_connection()
 
     # initialize flow_in and flow-out
-    station_name = [item[0] for item in stations]
+    station_id = [item[0] for item in stations]
+    station_name = [item[1] for item in stations]
+    respetive_name = {}
     flow_in = {}
     flow_out = {}
-    for item in station_name:
-        flow_in[item] = 0
-        flow_out[item] = 0
+    for index in range(0, len(station_id)):
+        respetive_name[station_id[index]] = station_name[index]
+        flow_in[station_id[index]] = 0
+        flow_out[station_id[index]] = 0
 
     # update flow_in and flow-out based on conditions
     if startsTime is None and endsTime is None:
@@ -345,7 +347,7 @@ def passenger_flow(startsTime=None, endsTime=None):
     # calculate flow_net and revenue based on flow_in and flow-out
     flow_net = {}
     revenue = {}
-    for s in station_name:
+    for s in station_id:
         flow_net[s] = flow_in[s] - flow_out[s]
         fare = 0
         for i in stations:
@@ -355,8 +357,8 @@ def passenger_flow(startsTime=None, endsTime=None):
 
     # put all together
     out = []
-    for i in station_name:
-        out.append((i, flow_in[i], flow_out[i], flow_net[i], revenue[i]))
+    for i in station_id:
+        out.append((respetive_name[i], flow_in[i], flow_out[i], flow_net[i], revenue[i]))
 
     return tuple(out)
 

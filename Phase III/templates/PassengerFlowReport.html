@@ -8,14 +8,16 @@
 <body>
 <div class="container">
       <h2>Passenger Flow Report</h2>
-      <label for="pwd">Start Time</label>
-      <input type="text" name="usr" id="usr" class="form-control" placeholder="startTime" required autofocus>
 
-      <label for="pwd">End Time</label>
-      <input type="text" name="usr" id="usr" class="form-control" placeholder="endTime" required autofocus>
-
-      <a class=" btn btn-primary" href="{{ url_for('to_write_reviews_single', subject=info['name']) }}" role="button">Update</a>
-      <a class=" btn btn-default" href="/to_city_search" role="button">Reset</a>
+      <form class="form-group" action="update_passenger_flow" method="post">
+          <label for="start_time">Start Time</label>
+          <input type="text" name="start_time" class="form-control" id="start_time">
+          <label for="end_time">End Time</label>
+          <input type="text" name="end_time" class="form-control" id="end_time">
+          <hr style="clear:both;">
+          <button id="btnSignIn" class="btn btn-primary" type="submit">Update Filter</button>
+          <a class=" btn btn-default" href="to_passenger_flow_report" role="button">Reset</a>
+      </form>
 
 
       <table class="table table-hover">
@@ -28,19 +30,19 @@
               <td>Revenue</td>
           </tr>
         </thead>
-        {% for o in passengers %}
+        {% for o in passenger_list %}
           <tr>
-                <td>{{ o["stationName"] }}</td>
-                <td>{{ o["passIn"] }}</td>
-                <td>{{ o["passOut"] }}</td>
-                <td>{{ o["flow"] }}</td>
-                <td>{{ o["revenue"] }}</td>
+                <td>{{ o[0] }}</td>
+                <td>{{ o[1] }}</td>
+                <td>{{ o[2] }}</td>
+                <td>{{ o[3] }}</td>
+                <td>{{ o[4] }}</td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
     <br>
-    <a class=" btn btn-default" href="to_city_search" role="button">Go Back</a>
+    <a class=" btn btn-default" href="to_admin" role="button">Go Back</a>
     </div>
 
 </body>

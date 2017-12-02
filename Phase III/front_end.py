@@ -196,6 +196,21 @@ def breezecard_action():
     bc_list = get_bc_list()
     return render_template('BreezeCardManage.html', card_list = bc_list, error = error)
 
+@app.route("/to_passenger_flow_report")
+def to_passenger_flow_report():
+    passenger_list = passenger_flow()
+    return render_template('PassengerFlowReport.html', passenger_list = passenger_list, error = "")
+
+@app.route("/update_passenger_flow", methods=["POST"])
+def update_passenger_flow():
+    print "update_passenger_flow start"
+    error = "successfully changed"
+    if request.method == "POST":
+        start_time = request.form['start_time']
+        end_time = request.form['end_time']
+        passenger_list = passenger_flow(start_time, end_time)
+        return render_template('PassengerFlowReport.html', passenger_list = passenger_list, error = "")
+
 
 
 
