@@ -51,15 +51,17 @@ def sign_in():
             wheter_intrip = inTrip(_name)
             print wheter_intrip
             if wheter_intrip[0]:
+                in_trip = True
                 stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
                 startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
             else:
+                in_trip = False
                 station_list = get_station_list()
                 startList = []
                 for i in station_list:
                     startList.append(((i[1], i[2]), i[0]))
                 startList = tuple(startList)
-            return render_template('home.html', startList = startList, card_list = card_list)
+            return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip)
         else:
             return render_template("login.html", error="Credentials Incorrect")
 
