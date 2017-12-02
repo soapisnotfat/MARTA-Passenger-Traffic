@@ -49,7 +49,6 @@ def sign_in():
             logged_user = _name
             card_list = get_bc_list(None, _name, None, None)
             wheter_intrip = inTrip(_name)
-            print wheter_intrip
             if wheter_intrip[0]:
                 in_trip = True
                 stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
@@ -61,7 +60,11 @@ def sign_in():
                 for i in station_list:
                     startList.append(((i[1], i[2]), i[0]))
                 startList = tuple(startList)
-            return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip)
+            endList = []
+            for i in station_list:
+                endList.append((i[1], i[0]),)
+            startList = tuple(startList)
+            return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "")
         else:
             return render_template("login.html", error="Credentials Incorrect")
 
@@ -103,6 +106,24 @@ def register():
             if result == 1:
                 global logged_user
                 logged_user = name
+                card_list = get_bc_list(None, name, None, None)
+                wheter_intrip = inTrip(name)
+                if wheter_intrip[0]:
+                    in_trip = True
+                    stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
+                    startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
+                else:
+                    in_trip = False
+                    station_list = get_station_list()
+                    startList = []
+                    for i in station_list:
+                        startList.append(((i[1], i[2]), i[0]))
+                    startList = tuple(startList)
+                endList = []
+                for i in station_list:
+                    endList.append((i[1], i[0]),)
+                startList = tuple(startList)
+                return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "")
                 return render_template("home.html")
             else:
                 error = "Unknown error occurred"
@@ -225,7 +246,66 @@ def update_passenger_flow():
         passenger_list = passenger_flow(start_time, end_time)
         return render_template('PassengerFlowReport.html', passenger_list = passenger_list, error = "")
 
+@app.route("/start_trip", methods=["POST"])
+def start_trip():
+    print "start_trip start"
+    if request.method == "POST":
+        start_station = request.form['start_selected']
+        cardNum = request.form['card_selected']
+        print cardNum
+        print start_station
+        result = take_trip(cardNum, start_station)
+        error = ""
+        if result != 0:
+            error = "cannot take the trip"
+        card_list = get_bc_list(None, logged_user, None, None)
+        wheter_intrip = inTrip(logged_user)
+        if wheter_intrip[0]:
+            in_trip = True
+            stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
+            startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
+        else:
+            in_trip = False
+            station_list = get_station_list()
+            startList = []
+            for i in station_list:
+                startList.append(((i[1], i[2]), i[0]))
+            startList = tuple(startList)
+        endList = []
+        for i in station_list:
+            endList.append((i[1], i[0]),)
+        startList = tuple(startList)
+        return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = error)
 
+
+@app.route("/user_end_trip", methods=["POST"])
+def user_end_trip():
+    print "end_trip start"
+    if request.method == "POST":
+        end_station = request.form['end_selected']
+        print end_station
+        result = end_trip(logged_user, end_station)
+        error = ""
+        if result != 0:
+            error = "cannot end the trip"
+        card_list = get_bc_list(None, logged_user, None, None)
+        wheter_intrip = inTrip(logged_user)
+        if wheter_intrip[0]:
+            in_trip = True
+            stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
+            startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
+        else:
+            in_trip = False
+            station_list = get_station_list()
+            startList = []
+            for i in station_list:
+                startList.append(((i[1], i[2]), i[0]))
+            startList = tuple(startList)
+        endList = []
+        for i in station_list:
+            endList.append((i[1], i[0]),)
+        startList = tuple(startList)
+        return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = error)
 
 
 

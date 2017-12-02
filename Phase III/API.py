@@ -449,8 +449,8 @@ return all conflicts
 
 format:
         bcNum,       new owner,    conflict date,     previous owner
-('4769432303280540', 'kellis', '2017-10-23 16:21:49', 'sandrapatel'), 
-('4769432303280540', 'riyoy1996', '2017-10-23 16:21:49', 'sandrapatel'), 
+('4769432303280540', 'kellis', '2017-10-23 16:21:49', 'sandrapatel'),
+('4769432303280540', 'riyoy1996', '2017-10-23 16:21:49', 'sandrapatel'),
 ('0475861680208144', 'sandrapatel', '2018-11-12 00:00:01', 'commuter14')
 
 '''
@@ -512,7 +512,8 @@ def take_trip(bcNum, startID):
     set_connection()
 
     # execute the query
-    # TODO: ...
+    return 1
+
 
     # close connection
     close_connection()
@@ -521,5 +522,13 @@ def take_trip(bcNum, startID):
 '''
 End the trip
 '''
-# def end_trip():
-#     # TODO: ??
+def end_trip(username, endId):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    return 1
+
+
+    # close connection
+    close_connection()
