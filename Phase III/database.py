@@ -99,39 +99,26 @@ def db_bc_exist(num):
 #   the info of this card
 #   format: ('0919948381768459', Decimal('126.50'), 'commuter14')
 #           ('9876543212345670', Decimal('92.50'), None)
-def db_bc_info(num = None, username = None, min_value = None, max_value = None):
-    if num is None and username is None and min_value is None and max_value is None:
-        print "database come to all null"
+def db_bc_info(num=None):
+    if num is None:
         query = "SELECT * FROM Breezecard"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
-    elif username is None:
-        print "database come to num"
-        query = "SELECT * FROM Breezecard WHERE breezecardNum = '%s'"
-        _cursor.execute(query % num)
-        res = _cursor.fetchall()
-        # _cursor.fetchall()
-        return res
-    else:
-        print "database come to username"
-        query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s'"
-        _cursor.execute(query % username)
-        res = _cursor.fetchall()
-        # _cursor.fetchall()
 
+    else:
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s'"
+        _cursor.execute(query)
+        res = _cursor.fetchall()
         return res
 
 # returns
 #   the bc of one user
-def db_user_bc_num(username):
-    query = "SELECT BreezecardNum FROM Breezecard WHERE BelongsTo = '%s'"
+def db_user_bc_info(username):
+    query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s'"
     _cursor.execute(query % username)
     res = _cursor.fetchall()
-    out = []
-    for item in res:
-        out.append(list(item)[0])
-    return out
+    return res
 
 # returns
 # True: if user is in trip
@@ -139,8 +126,11 @@ def db_user_bc_num(username):
 # False: if user is not in trip
 #     (False, None)
 def db_user_inTrip(username):
-    bc = db_user_bc_num(username)
-    for num in bc:
+    bc = db_user_bc_info(username)
+    out = []
+    for item in bc:
+        out.append(list(item)[0])
+    for num in out:
         info = db_trip_retrieve(num)
         for trip in info:
             if trip[-1] is None:
@@ -519,5 +509,5 @@ def db_trip_retrieve(bcNum=None):
 
 # Executions:
 # set_connection()
-# print(db_station_retrieve('31955'))
+# print(list(db_user_bc_info("kellis"))[0][0])
 # close_connection()
