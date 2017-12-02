@@ -264,7 +264,7 @@ def get_station_info(stopID):
 '''
 return enterfare of station
 '''
-def station_fare(stopID):
+def get_station_fare(stopID):
     return float(station_info(stopID)[2])
 
 '''

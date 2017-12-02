@@ -47,11 +47,19 @@ def sign_in():
         elif num == 2:
             global logged_user
             logged_user = _name
+            card_list = get_bc_list(None, _name, None, None)
             wheter_intrip = inTrip(_name)
             print wheter_intrip
-            if not wheter_intrip[0]:
-                wheter_intrip = (False, ('0.00', "2010, 10, 31, 21, 30", '1325138309320000', 'not_in_trip', None))
-            return render_template('home.html', info_list = wheter_intrip)
+            if wheter_intrip[0]:
+                stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
+                startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
+            else:
+                station_list = get_station_list()
+                startList = []
+                for i in station_list:
+                    startList.append(((i[1], i[2]), i[0]))
+                startList = tuple(startList)
+            return render_template('home.html', startList = startList, card_list = card_list)
         else:
             return render_template("login.html", error="Credentials Incorrect")
 
