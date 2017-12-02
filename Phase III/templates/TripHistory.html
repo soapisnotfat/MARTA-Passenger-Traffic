@@ -8,7 +8,17 @@
 <body style="padding: 3% 5% 5% 5%; width: 80%">
     <h1>Trip History Information</h1>
     <br>
-    Trips within:<br>
+
+    <form class="form-group" action="update_passenger_flow" method="post">
+          <label for="start_time">Start Time</label>
+          <input type="text" name="start_time" class="form-control" id="start_time">
+          <label for="end_time">End Time</label>
+          <input type="text" name="end_time" class="form-control" id="end_time">
+          <hr style="clear:both;">
+          <button id="btnSignIn" class="btn btn-primary" type="submit">Update Filter</button>
+          <a class=" btn btn-default" href="to_passenger_flow_report" role="button">Reset</a>
+      </form>
+      
     <table class="table table-hover">
         <thead>
           <tr>
