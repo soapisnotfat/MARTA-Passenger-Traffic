@@ -33,7 +33,6 @@
                 <p>{{ startStation[0][0] }} ${{ startStation[0][1] }} || Trip in progress</p>
             {% endfor %}
         {%else%}
-
             <p>Start At</p>
             {% for startStation in startList %}
             <p>
@@ -41,9 +40,9 @@
             </p>
             {% endfor %}
             <button class="btn btn-primary" name = "balance_or_start" value = "start_trip" id="start_trip" type="submit">Start Trip</button>
-        </form>
+
         {%endif%}
-        <form class="form-group" action="user_end_trip" method="post">
+
         <p>Ending At</p>
 
         {% for endStation in endList %}
@@ -51,7 +50,7 @@
             <input type="radio" name="end_selected" value = {{endStation[1] }}>{{ endStation[0]}}
         </p>
         {% endfor %}
-        <button class="btn btn-primary" name = "user_end_trip" value = "user_end_trip" id="user_end_trip" type="submit">End Trip</button>
+        <button class="btn btn-primary" name = "balance_or_start" value = "user_end_trip" id="user_end_trip" type="submit">End Trip</button>
         </form>
 
         <br>

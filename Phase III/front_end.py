@@ -55,13 +55,13 @@ def sign_in():
             card_list_list.remove(selected_card)
             card_list = tuple(card_list_list)
             wheter_intrip = inTrip(_name)
+            station_list = get_station_list()
             if wheter_intrip[0]:
                 in_trip = True
                 stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
                 startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
             else:
                 in_trip = False
-                station_list = get_station_list()
                 startList = []
                 for i in station_list:
                     startList.append(((i[1], i[2]), i[0]))
@@ -115,13 +115,13 @@ def register():
                 logged_user = name
                 card_list = get_bc_list(None, name, None, None)
                 wheter_intrip = inTrip(name)
+                station_list = get_station_list()
                 if wheter_intrip[0]:
                     in_trip = True
                     stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
                     startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
                 else:
                     in_trip = False
-                    station_list = get_station_list()
                     startList = []
                     for i in station_list:
                         startList.append(((i[1], i[2]), i[0]))
@@ -253,42 +253,6 @@ def update_passenger_flow():
         passenger_list = passenger_flow(start_time, end_time)
         return render_template('PassengerFlowReport.html', passenger_list = passenger_list, error = "")
 
-@app.route("/user_end_trip", methods=["POST"])
-def user_end_trip():
-    print "end_trip start"
-    if request.method == "POST":
-        end_station = request.form['end_selected']
-        print end_station
-        result = end_trip(logged_user, end_station)
-        error = ""
-        if result != 0:
-            error = "cannot end the trip"
-        selected_card_num = request.form['card_selected']
-        selected_card = bc_info(selected_card_num)
-        selected_card = selected_card[0]
-        print selected_card
-        card_list = get_bc_list(None, logged_user, None, None)
-        card_list_list = list(card_list)
-        card_list_list.remove(selected_card)
-        card_list = tuple(card_list_list)
-        wheter_intrip = inTrip(logged_user)
-        if wheter_intrip[0]:
-            in_trip = True
-            stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
-            startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
-        else:
-            in_trip = False
-            station_list = get_station_list()
-            startList = []
-            for i in station_list:
-                startList.append(((i[1], i[2]), i[0]))
-            startList = tuple(startList)
-        endList = []
-        for i in station_list:
-            endList.append((i[1], i[0]),)
-        startList = tuple(startList)
-        return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
-
 
 @app.route("/balance_or_start", methods=["POST"])
 def balance_or_start():
@@ -308,6 +272,13 @@ def balance_or_start():
             else:
                 error = "successfully take trip"
             print error
+        elif button_chosen == "user_end_trip":
+            end_station = request.form['end_selected']
+            print end_station
+            result = end_trip(logged_user, end_station)
+            error = ""
+            if result != 0:
+                error = "cannot end the trip"
         selected_card = bc_info(selected_card_num)
         selected_card = selected_card[0]
         print selected_card
@@ -316,13 +287,13 @@ def balance_or_start():
         card_list_list.remove(selected_card)
         card_list = tuple(card_list_list)
         wheter_intrip = inTrip(logged_user)
+        station_list = get_station_list()
         if wheter_intrip[0]:
             in_trip = True
             stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
             startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
         else:
             in_trip = False
-            station_list = get_station_list()
             startList = []
             for i in station_list:
                 startList.append(((i[1], i[2]), i[0]))
