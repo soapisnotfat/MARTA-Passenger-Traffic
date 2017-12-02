@@ -192,12 +192,97 @@ def get_bc_list(num = None, username = None, min_value = None, max_value = None)
     set_connection()
 
     # execute the query
-    out = db_bc_info(num, username, min_value, max_value)
+    if num is None \
+            and username is None \
+            and min_value is None \
+            and max_value is None:
+        out = []
+    elif num is not None \
+            and username is None \
+            and min_value is None \
+            and max_value is None:
+        out = db_bc_info(num)
+    elif num is None \
+            and username is not None \
+            and min_value is None \
+            and max_value is None:
+        out = db_user_bc_info(username)
+    elif num is not None \
+            and username is not None \
+            and min_value is None \
+            and max_value is None:
+        out = [item for item in db_user_bc_info(username) if num == item[0]]
+
+    elif num is None \
+            and username is None \
+            and min_value is not None \
+            and max_value is not None:
+        out = [item for item in db_bc_info() if min_value <= float(item[1]) <= max_value]
+    elif num is not None \
+            and username is None \
+            and min_value is not None \
+            and max_value is not None:
+        out = [item for item in db_bc_info(num) if min_value <= float(item[1]) <= max_value]
+    elif num is None \
+            and username is not None \
+            and min_value is not None \
+            and max_value is not None:
+        out = [item for item in db_user_bc_info(username) if min_value <= float(item[1]) <= max_value]
+    elif num is not None \
+            and username is not None \
+            and min_value is not None \
+            and max_value is not None:
+        temp = [item for item in db_user_bc_info(username) if num == item[0]]
+        out = [item for item in temp if min_value <= float(item[1]) <= max_value]
+
+    elif num is None \
+            and username is None \
+            and min_value is not None \
+            and max_value is None:
+        out = [item for item in db_bc_info() if min_value <= float(item[1])]
+    elif num is not None \
+            and username is None \
+            and min_value is not None \
+            and max_value is None:
+        out = [item for item in db_bc_info(num) if min_value <= float(item[1])]
+    elif num is None \
+            and username is not None \
+            and min_value is not None \
+            and max_value is None:
+        out = [item for item in db_user_bc_info(username) if min_value <= float(item[1])]
+    elif num is not None \
+            and username is not None \
+            and min_value is not None \
+            and max_value is None:
+        temp = [item for item in db_user_bc_info(username) if num == item[0]]
+        out = [item for item in temp if min_value <= float(item[1])]
+
+    elif num is None \
+            and username is None \
+            and min_value is None \
+            and max_value is not None:
+        out = [item for item in db_bc_info() if float(item[1]) <= max_value]
+    elif num is not None \
+            and username is None \
+            and min_value is None \
+            and max_value is not None:
+        out = [item for item in db_bc_info(num) if float(item[1]) <= max_value]
+    elif num is None \
+            and username is not None \
+            and min_value is None \
+            and max_value is not None:
+        out = [item for item in db_user_bc_info(username) if float(item[1]) <= max_value]
+    elif num is not None \
+            and username is not None \
+            and min_value is None \
+            and max_value is not None:
+        temp = [item for item in db_user_bc_info(username) if num == item[0]]
+        out = [item for item in temp if float(item[1]) <= max_value]
 
     # close connection
     close_connection()
 
-    return out
+    return tuple(out)
 
 '''
 generate a usable breezecard number
@@ -220,7 +305,6 @@ def generate_bc():
     else:
         close_connection()
         generate_bc()
-
 
 
 '''
@@ -264,8 +348,8 @@ def get_station_info(stopID):
 '''
 return enterfare of station
 '''
-def get_station_fare(stopID):
-    return float(station_info(stopID)[2])
+def station_fare(stopID):
+    return float(get_station_info(stopID)[2])
 
 '''
 update the fare of station fare
@@ -414,3 +498,6 @@ End the trip
 '''
 # def end_trip():
 #     # TODO: ??
+
+
+print get_bc_list(None, None, None, 50)
