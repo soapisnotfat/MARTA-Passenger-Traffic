@@ -39,8 +39,18 @@
         </tbody>
     </table>
 
+    <input type="text" name="add_card" class="form-control" id="set_value" maxlength="32">
+    <button class="btn btn-primary" name = "isset" value = "add_card" id="add_card" type="submit">Add Card</button><br>
+   <br>
+    <font size="5">Add Value to Selected Card</font>
     <br>
-    <a class=" btn btn-primary" href="{{ url_for('to_write_reviews_single', subject=info['name']) }}" role="button">Write Review</a>
+    <label for="credit_card_number">Credit Card Number:</label>
+        <input type="text" name="credit_card_number" class="form-control" id="credit_card_number" maxlength="32">
+    <label for="money_value">Value:</label>
+        <input type="text" name="money_value" class="form-control" id="money_value" maxlength="32">
+    <button class="btn btn-primary" name = "isset" value = "add_value" id="add_value" type="submit">Add Value</button>
+
+    <br>
     <a class=" btn btn-default" href="/to_city_search" role="button">Go Back</a>
 
 </body>
