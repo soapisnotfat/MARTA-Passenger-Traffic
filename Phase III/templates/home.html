@@ -12,28 +12,45 @@
     <br>
     <p align="center">
         <!--Making buttons might be nice-->
+        <form class="form-group" action="start_trip" method="post">
         <p>Breezecard</p>
         {% for card in card_list %}
         <p>
-          <input type="radio" name="row_select" value = {{card[0] }}>{{ card[0] }}
+          <input type="radio" name="card_selected" value = {{card[0] }}>{{ card[0] }}
         </p>
         {% endfor %}
         <hr>
         {% if in_trip %}
+            <p>Start At</p>
             {% for startStation in startList %}
                 <p>{{ startStation[0][0] }} ${{ startStation[0][1] }} || Trip in progress</p>
             {% endfor %}
         {%else%}
-        <p>Start At</p>
-        {% for startStation in startList %}
+
+            <p>Start At</p>
+            {% for startStation in startList %}
+            <p>
+                <input type="radio" name="start_selected" value = {{startStation[1] }}>{{ startStation[0][0] }} ${{ startStation[0][1] }}
+            </p>
+            {% endfor %}
+            <button class="btn btn-primary" name = "start_trip" value = "start_trip" id="start_trip" type="submit">Start Trip</button>
+
+        {%endif%}
+        </form>
+        <p>Ending At</p>
+        <form class="form-group" action="user_end_trip" method="post">
+        {% for endStation in endList %}
         <p>
-            <input type="radio" name="row_select" value = {{startStation[1] }}>{{ startStation[0][0] }} ${{ startStation[0][1] }}
+            <input type="radio" name="end_selected" value = {{endStation[1] }}>{{ endStation[0]}}
         </p>
         {% endfor %}
-        {%endif%}
+        <button class="btn btn-primary" name = "user_end_trip" value = "user_end_trip" id="user_end_trip" type="submit">End Trip</button>
+        </form>
+
         <br>
         <a class=" btn btn-danger" href="to_login" role="button">Sign out</a>
     </p>
+    <p id = "feedback"  style="color: red">{{error}}</p>
 
 </body>
 </html>
