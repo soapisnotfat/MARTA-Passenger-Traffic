@@ -12,13 +12,20 @@
     <br>
     <p align="center">
         <!--Making buttons might be nice-->
-        <form class="form-group" action="start_trip" method="post">
+
         <p>Breezecard</p>
+        <form class="form-group" action="balance_or_start" method="post">
+
+
+        <select name="card_selected">
+        <option value = {{selected_card[0]}} selected>{{selected_card[0]}}</option>
         {% for card in card_list %}
-        <p>
-          <input type="radio" name="card_selected" value = {{card[0] }}>{{ card[0] }}
-        </p>
+          <option value = {{card[0]}}>{{ card[0] }}</option>
         {% endfor %}
+        </select>
+        <button class="btn btn-primary" name = "balance_or_start" value = "select_breeze_card" id="select_breeze_card" type="submit">Select Card</button>
+        <p>Balance: ${{selected_card[1]}}</p>
+
         <hr>
         {% if in_trip %}
             <p>Start At</p>
@@ -33,12 +40,12 @@
                 <input type="radio" name="start_selected" value = {{startStation[1] }}>{{ startStation[0][0] }} ${{ startStation[0][1] }}
             </p>
             {% endfor %}
-            <button class="btn btn-primary" name = "start_trip" value = "start_trip" id="start_trip" type="submit">Start Trip</button>
-
-        {%endif%}
+            <button class="btn btn-primary" name = "balance_or_start" value = "start_trip" id="start_trip" type="submit">Start Trip</button>
         </form>
-        <p>Ending At</p>
+        {%endif%}
         <form class="form-group" action="user_end_trip" method="post">
+        <p>Ending At</p>
+
         {% for endStation in endList %}
         <p>
             <input type="radio" name="end_selected" value = {{endStation[1] }}>{{ endStation[0]}}
