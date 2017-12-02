@@ -32,13 +32,13 @@
           </tr>
         </thead>
         <tbody>
-        {% for o in suspended %}
+        {% for o in conflict %}
           <tr>
 
-                <td><a href="{{ url_for('to_country_page', country=o['name']) }}">{{ o["cardNum"] }}</a></td>
-                <td>{{ o["newOwner"] }}</td>
-                <td>{{ o["dateSuspend"] }}</td>
-                <td>{{ o["prevOwner"] }}</td>
+                <td>{{ o[0] }}</td>
+                <td>{{ o[1] }}</td>
+                <td>{{ o[2] }}</td>
+                <td>{{ o[3] }}</td>
           </tr>
         {% endfor %}
         </tbody>
