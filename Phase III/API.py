@@ -157,7 +157,10 @@ def bc_add_value(num, value):
     current_card = db_bc_info(num)
     if current_card is None:
         return 1
-    current_value = float(current_card[1])
+    print current_card
+    card = current_card[0]
+    card_value = card[1]
+    current_value = float(card_value)
     update_status = db_bc_update_value(num, current_value + value)
 
     # close connection
@@ -475,7 +478,7 @@ return trip history in a specific time span
 
 format:
         time           source dst   fare        num
-['2017-10-31 21:30:00', 'FP', None, 1.0, '1325138309325420'], 
+['2017-10-31 21:30:00', 'FP', None, 1.0, '1325138309325420'],
 ['2017-10-28 22:11:13', 'N4', 'N11', 1.5, '9248324548250130']
 
 '''
@@ -528,7 +531,7 @@ def take_trip(bcNum, startID):
 
     # execute the query
     start_station = db_station_retrieve(startID)
-    
+
     fare = float(start_station[2])
     time = str(datetime.now())[:-7]
     status = trip_insert(fare, time, bcNum, startID)

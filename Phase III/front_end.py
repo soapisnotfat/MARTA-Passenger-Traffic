@@ -304,7 +304,38 @@ def balance_or_start():
         startList = tuple(startList)
         return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
 
+@app.route("/to_maganage_card")
+def to_maganage_card():
+    card_list = get_bc_list(None, logged_user, None, None)
+    return render_template('manageCard.html', card_list = card_list, error="")
 
+@app.route("/manage_card_function", methods=["POST"])
+def manage_card_function():
+    print "manage_card_function start"
+    error = ""
+    if request.method == "POST":
+        button_chosen = request.form['manage_card_function']
+        if button_chosen == "remove":
+            card_selected_num = request.form['card_selected']
+            result = bc_change_user(card_selected_num, None)
+            if result != 0:
+                error = "cannot remove card"
+        elif button_chosen == "add_card":
+            card_selected_num = request.form['add_card']
+            result = add_breezecard(card_selected_num, logged_user)
+            if result != 0:
+                error = "cannot add card to user"
+            else:
+                error = "add card successfully"
+
+        elif button_chosen == "add_value":
+            card_selected_num = request.form['card_selected']
+            add_money = float(request.form['money_value'])
+            result = bc_add_value(card_selected_num, add_money)
+            if result != 0:
+                error = "cannot add money to this card"
+        card_list = get_bc_list(None, logged_user, None, None)
+        return render_template('manageCard.html', card_list = card_list, error=error)
 
 
 

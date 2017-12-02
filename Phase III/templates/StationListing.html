@@ -12,12 +12,12 @@
     <table class="table table-hover">
         <thead>
           <tr>
-              <td>Station Name 
+              <td>Station Name
                 <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
                   <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
                 </button>
               </td>
-                
+
               <td>Stop ID
                 <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
                   <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
@@ -26,7 +26,7 @@
                   <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
                 </button>
               </td>
-                
+
               <td>Fare
                 <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
                   <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
@@ -35,7 +35,7 @@
                   <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
                 </button>
               </td>
-                
+
               <td>Status
                 <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
                   <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
@@ -43,7 +43,7 @@
                 <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
                   <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
                 </button>
-              </td> 
+              </td>
           </tr>
         </thead>
         <tbody>
@@ -51,7 +51,7 @@
 
           <tr>
                 <td>
-                  <input type="radio" name="row_select" value = "{{ o[0] }}">{{ o[1] }}
+                  <input type="radio" name="row_select" value = {{ o[0] }}>{{ o[1] }}
                 </td>
                 <td>{{ o[0] }}</td>
                 <td>{{ o[2] }}</td>

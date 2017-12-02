@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 <body style="padding: 3% 5% 5% 5%; width: 80%">
+    <form class="form-group" action="manage_card_function" method="post">
     <h1>Breeze Card</h1>
    <table class="table table-hover">
         <thead>
@@ -29,12 +30,12 @@
           </tr>
         </thead>
         <tbody>
-        {% for o in breezeCard %}
+        {% for o in card_list %}
           <tr>
-                <td>{{ o[0] }}</td>
+                <td><input type="radio" name="card_selected" value = {{ o[0] }}>{{ o[0] }}</td>
                 <td>{{ o[1] }}</td>
                 <td>
-                  <button class="btn btn-default btn-xs" type="submit">Remove</button>
+                  <button class="btn btn-primary" name = "manage_card_function" value = "remove" type="submit">Remove</button>
                 </td>
           </tr>
         {% endfor %}
@@ -42,18 +43,20 @@
     </table>
 
     <input type="text" name="add_card" class="form-control" id="set_value" maxlength="32">
-    <button class="btn btn-primary" name = "isset" value = "add_card" id="add_card" type="submit">Add Card</button><br>
+    <button class="btn btn-primary" name = "manage_card_function" value = "add_card" id="add_card" type="submit">Add Card</button><br>
    <br>
     <font size="5">Add Value to Selected Card</font>
     <br>
-    <label for="credit_card_number">Credit Card Number:</label>
-        <input type="text" name="credit_card_number" class="form-control" id="credit_card_number" maxlength="32">
-    <label for="money_value">Value:</label>
+    <label for="credit_card_number" >Credit Card Number:</label>
+        <input type="text" name="credit_card_number" class="form-control" id="credit_card_number" minlength="16" maxlength="16">
+    <label for="money_value">Value: $</label>
         <input type="text" name="money_value" class="form-control" id="money_value" maxlength="32">
-    <button class="btn btn-primary" name = "isset" value = "add_value" id="add_value" type="submit">Add Value</button>
+    <button class="btn btn-primary" name = "manage_card_function" value = "add_value" id="add_value" type="submit">Add Value</button>
 
     <br>
     <a class=" btn btn-default" href="/to_city_search" role="button">Go Back</a>
+  </form>
+  <p id = "feedback"  style="color: red">{{error}}</p>
 
 </body>
 </html>
