@@ -11,13 +11,13 @@
     <div class="container-fluid">
         <form class="form-group" action="create_new_station" method="post">
             <label for="station_name">Station Name:</label>
-            <input type="text" name="station_name" class="form-control" id="station_name" maxlength="32" required>
+            <input type="text" name="station_name" class="form-control" id="station_name" required>
 
             <label for="station_id">Stop ID:</label>
-            <input type="text" name="station_id" class="form-control" id="station_id" maxlength="32" required>
+            <input type="text" name="station_id" class="form-control" id="station_id" required>
 
             <label for="station_fare">Enter Fare:</label>
-            <input type="text" name="station_fare" class="form-control" id="station_fare" maxlength="32" required>
+            <input type="text" name="station_fare" class="form-control" id="station_fare" required>
 
             <input type="radio" name="BusOrTrain" value="Bus" font:24px>Bus Station<br>
                 <label for="bus_intersection">Nearest Intersection: </label>
@@ -25,9 +25,9 @@
             <input type="radio" name="BusOrTrain" value="Train" font:24px>Train Station<br>
 
 
-            <label for="station_status">Station Status:</label>
-            <input type="radio" name="station_status" value="Open" font:24px>Open<br>
-            <input type="radio" name="station_status" value="Closed" font:24px>Closed<br>
+            <label for="station_status">Station Status:</label><br>
+                <input type="radio" name="station_status" value="Open" font:24px>Open<br>
+                <input type="radio" name="station_status" value="Closed" font:24px>Closed<br>
 
             <br>
             <button id="btnSignIn" class="btn btn-primary" type="submit">Create Station</button>
