@@ -19,12 +19,18 @@
         </p>
         {% endfor %}
         <hr>
+        {% if in_trip %}
+            {% for startStation in startList %}
+                <p>{{ startStation[0][0] }} ${{ startStation[0][1] }} || Trip in progress</p>
+            {% endfor %}
+        {%else%}
         <p>Start At</p>
         {% for startStation in startList %}
         <p>
-          <input type="radio" name="row_select" value = {{startStation[1] }}>{{ startStation[0][0] }} ${{ startStation[0][1] }}
+            <input type="radio" name="row_select" value = {{startStation[1] }}>{{ startStation[0][0] }} ${{ startStation[0][1] }}
         </p>
         {% endfor %}
+        {%endif%}
         <br>
         <a class=" btn btn-danger" href="to_login" role="button">Sign out</a>
     </p>
