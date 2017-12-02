@@ -152,7 +152,7 @@ def to_suspend_card():
 def to_breeze_card():
     bc_list = get_bc_list()
     # bc_list = (('0475861680208144', Decimal('35.25'), 'commuter14'), )
-    return render_template('BreezeCardManage.html', card_list = bc_list)
+    return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
 
 @app.route("/filter_bc", methods=["POST"])
 def filter_bc():
@@ -166,27 +166,35 @@ def filter_bc():
         print card_number
         if owner != "":
             print "come to owner"
-            bc_list = get_bc_list(None, owner)
+            bc_list = get_bc_list(None, owner, None, None)
         elif card_number != "":
             print "come to number"
-            bc_list = get_bc_list(card_number, None)
+            bc_list = get_bc_list(card_number, None, None)
         else:
             bc_list = get_bc_list()
         print bc_list
-        return render_template('BreezeCardManage.html', card_list = bc_list)
+        return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
 
 @app.route("/breezecard_action", methods=["POST"])
 def breezecard_action():
     print "breezecard_action start"
+    error = "successfully changed"
     if request.method == "POST":
+        stationId = request.form['row_select']
         if (request.form['isset'] == "transfer_name"):
-            print "transfer_name"
+            username = request.form['transfer_name']
+            result = bc_change_user(stationId, username)
+            if result == 1:
+                error = "Whoops, something goes wrong"
         elif (request.form['isset'] == 'set_value'):
-            print "set_value"
+            set_value = request.form['set_value']
+            result = bc_change_value(stationId, float(set_value))
+            if result == 1:
+                error = "Whoops, something goes wrong"
         else:
-            print "some error"
+            error = "some error about clicking"
     bc_list = get_bc_list()
-    return render_template('BreezeCardManage.html', card_list = bc_list)
+    return render_template('BreezeCardManage.html', card_list = bc_list, error = error)
 
 
 
