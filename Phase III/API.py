@@ -474,11 +474,27 @@ def conflict_list():
 return trip history in a specific time span
 
 format:
+        time           source dst   fare        num
+['2017-10-31 21:30:00', 'FP', None, 1.0, '1325138309325420'], 
+['2017-10-28 22:11:13', 'N4', 'N11', 1.5, '9248324548250130']
 
 '''
 def trip_history(username):
-    # TODO: ...
-    return 0
+    # set up connection
+    set_connection()
+
+    BCs = db_user_bc_num(username)
+    trips = []
+    for bc in BCs:
+        for trip in db_trip_retrieve(bc):
+            trips.append(trip)
+
+    # close connection
+    close_connection()
+
+    out = (tuple([str(t[1]), t[3], t[4], float(t[0]), t[2]] for t in trips))
+
+    return out
 
 '''
 returns
@@ -504,31 +520,45 @@ starting a trip
 
 :returns
     0 - successfully started a trip
-    1 - any violation
-    2 - in a trip
+    other - any violation
 '''
 def take_trip(bcNum, startID):
     # set up connection
     set_connection()
 
     # execute the query
-    return 1
-
+    start_station = db_station_retrieve(startID)
+    
+    fare = float(start_station[2])
+    time = str(datetime.now())[:-7]
+    status = trip_insert(fare, time, bcNum, startID)
 
     # close connection
     close_connection()
 
+    return status
 
 '''
 End the trip
+
+:returns
+    0 - is not in trip
+    1 - end trip successfully
 '''
 def end_trip(username, endId):
+    current_trip = inTrip(username)
+    if not current_trip[0]:
+        return 0
+    trip_detail = current_trip[1]
     # set up connection
     set_connection()
 
     # execute the query
-    return 1
-
+    time = str(trip_detail[1])
+    bcNum = trip_detail[2]
+    status = db_trip_update(time, bcNum, endId)
 
     # close connection
     close_connection()
+
+    return status

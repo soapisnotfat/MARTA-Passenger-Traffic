@@ -121,15 +121,18 @@ def db_user_bc_info(username):
     return res
 
 # returns
+#   the bcNum of one user
+def db_user_bc_num(username):
+    out = [list(item)[0] for item in db_user_bc_info(username)]
+    return out
+
+# returns
 # True: if user is in trip
 #     (True, (Decimal('1.00'), datetime.datetime(2017, 10, 31, 21, 30), '1325138309325420', 'FP', None))
 # False: if user is not in trip
 #     (False, None)
 def db_user_inTrip(username):
-    bc = db_user_bc_info(username)
-    out = []
-    for item in bc:
-        out.append(list(item)[0])
+    out = [list(item)[0] for item in db_user_bc_info(username)]
     for num in out:
         info = db_trip_retrieve(num)
         for trip in info:
@@ -508,6 +511,27 @@ def trip_insert(Tripfare, StartTime, BreezecardNum, StartsAt, EndsAt=None):
                 # other violations
                 return 2
 
+# update trip's destination
+# @param: String: time
+# @param: String: bcNum (length 16 fixed)
+# @param: String: endsID
+# returns:
+#   0 - successfully updated
+#   1 - any exception
+def db_trip_update(time, bcNum, endsID):
+    query = "UPDATE Trip SET EndsAt = '%s' WHERE StartTime = '%s' AND BreezecardNum = '%s'"
+    try:
+        print("log :: executing trip update query\n")
+        _cursor.execute(query % (endsID, time, bcNum))
+        _database.commit()
+        print("++ Successfully update " + bcNum + "'s holder ++\n")
+        return 0
+
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
+
 # retrieve Trip info
 #
 # returns
@@ -526,6 +550,6 @@ def db_trip_retrieve(bcNum=None):
         return res
 
 # Executions:
-set_connection()
-conflict_insert('sandrapatel', '4769432303280540', '2017-12-02 15:41:01')
-close_connection()
+# set_connection()
+# trip_insert(1, '2017-10-31 21:30:00', '1325138309325420', 'FP')
+# close_connection()
