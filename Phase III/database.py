@@ -108,7 +108,7 @@ def db_bc_info(num=None):
 
     else:
         query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s'"
-        _cursor.execute(query)
+        _cursor.execute(query % num)
         res = _cursor.fetchall()
         return res
 
@@ -441,6 +441,24 @@ def conflict_insert(username, BreezeCardNum, DateAndTime):
             # other violations
             return 2
 
+# retrieve Conflict info
+#
+# returns
+#     a tuple of one Conflict's info
+#     a tuple of tuples of Conflict' info
+# format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
+def db_conflict_retrieve(num=None):
+    if num is None:
+        query = "SELECT * FROM Conflict"
+        _cursor.execute(query)
+        res = _cursor.fetchall()
+        return res
+    else:
+        query = "SELECT * FROM Conflict WHERE BreezecardNum = '%s'"
+        _cursor.execute(query % num)
+        res = _cursor.fetchall()
+        return res
+
 # insert tuples to Trip
 # @param: float: Tripfare
 # @param: String: StartTime
@@ -508,6 +526,6 @@ def db_trip_retrieve(bcNum=None):
         return res
 
 # Executions:
-# set_connection()
-# print(list(db_user_bc_info("kellis"))[0][0])
-# close_connection()
+set_connection()
+conflict_insert('sandrapatel', '4769432303280540', '2017-12-02 15:41:01')
+close_connection()

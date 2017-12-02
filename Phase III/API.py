@@ -89,7 +89,7 @@ def add_breezecard(num, username):
         if bc_info[2] is not None:
             # conflict caught
             print("conflict caught")
-            # TODO: add conflict to database
+            conflict_insert(username, num, str(datetime.now())[:-7])
             out = 1
         else:
             # update new holder
@@ -142,7 +142,6 @@ def bc_change_value(num, value):
 
     return update_status
 
-
 '''
 add a certain value to a breezecard
 
@@ -187,7 +186,7 @@ def bc_info(num):
 '''
 get a list of breezecard
 '''
-def get_bc_list(num = None, username = None, min_value = None, max_value = None):
+def get_bc_list(num=None, username=None, min_value=None, max_value=None):
     # set up connection
     set_connection()
 
@@ -196,7 +195,7 @@ def get_bc_list(num = None, username = None, min_value = None, max_value = None)
             and username is None \
             and min_value is None \
             and max_value is None:
-        out = []
+        out = db_bc_info()
     elif num is not None \
             and username is None \
             and min_value is None \
@@ -305,7 +304,6 @@ def generate_bc():
     else:
         close_connection()
         generate_bc()
-
 
 '''
 return a list of all station's info
@@ -447,12 +445,39 @@ def passenger_flow(startsTime=None, endsTime=None):
     return tuple(out)
 
 '''
+return all conflicts
+
+format:
+        bcNum,       new owner,    conflict date,     previous owner
+('4769432303280540', 'kellis', '2017-10-23 16:21:49', 'sandrapatel'), 
+('4769432303280540', 'riyoy1996', '2017-10-23 16:21:49', 'sandrapatel'), 
+('0475861680208144', 'sandrapatel', '2018-11-12 00:00:01', 'commuter14')
+
+'''
+def conflict_list():
+    # set up connection
+    set_connection()
+
+    conflicts = db_conflict_retrieve()
+    out = []
+    for c in conflicts:
+        previous_owner = db_bc_info(c[1])[0][2]
+        temp = [c[1], c[0], str(c[2]), previous_owner]
+        out.append(tuple(temp))
+
+    # close connection
+    close_connection()
+
+    return tuple(out)
+
+'''
 return trip history in a specific time span
 
 format:
 
 '''
 def trip_history(username):
+    # TODO: ...
     return 0
 
 '''
@@ -487,7 +512,7 @@ def take_trip(bcNum, startID):
     set_connection()
 
     # execute the query
-
+    # TODO: ...
 
     # close connection
     close_connection()
@@ -498,6 +523,3 @@ End the trip
 '''
 # def end_trip():
 #     # TODO: ??
-
-
-print get_bc_list(None, None, None, 50)
