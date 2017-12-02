@@ -47,7 +47,11 @@ def sign_in():
         elif num == 2:
             global logged_user
             logged_user = _name
-            return render_template('home.html')
+            wheter_intrip = inTrip(_name)
+            print wheter_intrip
+            if not wheter_intrip[0]:
+                wheter_intrip = (False, ('0.00', "2010, 10, 31, 21, 30", '1325138309320000', 'not_in_trip', None))
+            return render_template('home.html', info_list = wheter_intrip)
         else:
             return render_template("login.html", error="Credentials Incorrect")
 

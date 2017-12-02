@@ -3,43 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <title>GT Travel Home</title>
+    <title>Welcome to Marta!</title>
     <script src="../Scripts/homepage.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 </head>
 <body>
-
-    <h1 align="center">Select Operation</h1>
+    <h1 align="center">Welcome to Marta!</h1>
     <br>
     <p align="center">
         <!--Making buttons might be nice-->
-        <a href="to_country_search">Country Search</a><br>
-        <a href="to_city_search">City Search</a><br>
-        <a href="to_location_search">Location Search</a><br>
-        <a href="to_event_search">Event Search</a><br>
-        <a href="to_write_reviews">Write a Review</a><br>
-        <a href="to_past_reviews">See Past Reviews</a><br>
+        <p>{{info_list[1][3]}}</p>
         <br>
         <a class=" btn btn-danger" href="to_login" role="button">Sign out</a>
     </p>
-    <!--
-    <a class="btn btn-lg btn-success" href="testing" role="button">Sign up today</a>
-    <p id="test">
-    </p>
-    -->
-    <!--
-    <script>
-        $('#testing123').click(function(){
-            $.ajax({
-                url: "../test.py",
-                success: function(response){
-                    //here you do whatever you want with the response variable
-                    document.getElementById("test").innerHTML = response;
-                }
-            });
-        });
-    </script>
-    -->
 
 </body>
 </html>
