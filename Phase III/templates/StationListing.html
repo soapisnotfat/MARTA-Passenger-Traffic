@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{info["name"]}}</title>
+    <title></title>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 <body style="padding: 3% 5% 5% 5%; width: 80%">
+  <form class="container-fluid" action="station_management" method="post">
     <h1>Station Information</h1>
     <br>
     <table class="table table-hover">
@@ -18,22 +19,29 @@
           </tr>
         </thead>
         <tbody>
-        {% for o in reviews %}
+        {% for o in station_list %}
+
           <tr>
-                <td>{{ o["username"] }}</td>
-                <td>{{ o["date"] }}</td>
-                <td>{{ o["score"] }}</td>
-                <td>{{ o["description"] }}</td>
+                <td>
+                  <input type="radio" name="row_select" value = {{ o[0] }}>{{ o[1] }}
+                </td>
+                <td>{{ o[0] }}</td>
+                <td>{{ o[2] }}</td>
+                <td>{{ o[3] }}</td>
+
           </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <br>
-    <a class=" btn btn-primary" href="{{ url_for('to_write_reviews_single', subject=info['name'] + ', ' +
-        info['location'] + ', ' + info['date'] + ', ' + info['starttime'] ) }}" role="button">Create New Station</a>
-    <a class=" btn btn-default" href="/to_event_search" role="button">View Station</a>
+
+    <a class=" btn btn-default" href="/to_create_new_station" role="button">Creat New Station</a>
+    <button class="btn btn-primary" id="station_management" type="submit">Select Station</button>
+    <a class=" btn btn-default" href="/to_admin" role="button">Go Back</a>
+
     <br>
 
+</form>
 </body>
 </html>

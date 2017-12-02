@@ -8,54 +8,54 @@
 <body style="padding: 3% 5% 5% 5%; width: 80%">
     <h1>Breeze Card Management</h1>
     <br>
-    Locations within:<br>
-    <table class="table table-hover">
-        <thead>
-          <tr>
-              <td>Name</td>
-              <td>Card Value</td>
-              <td>Value</td>
-          </tr>
-        </thead>
-        <tbody>
-        {% for o in locations %}
-          <tr>
-                <td>{{ o["name"] }}</td>
-                <td>{{ o["type"] }}</td>
-                <td>{{ o["cost"] }}</td>
-                <td>{{ o["score"] }}</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-        <p style="color: red">{{m1}}</p>
-    <br>
-    Reviews:
-    <br>
-    <table class="table table-hover">
-        <thead>
-          <tr>
-              <td>Username</td>
-              <td>Date</td>
-              <td>Score</td>
-              <td>Description</td>
-          </tr>
-        </thead>
-        <tbody>
-        {% for o in reviews %}
-          <tr>
-                <td>{{ o["username"] }}</td>
-                <td>{{ o["date"] }}</td>
-                <td>{{ o["score"] }}</td>
-                <td>{{ o["description"] }}</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <p style="color: red">{{m2}}</p>
-    <br>
-    <a class=" btn btn-primary" href="{{ url_for('to_write_reviews_single', subject=info['name']) }}" role="button">Write Review</a>
-    <a class=" btn btn-default" href="/to_city_search" role="button">Go Back</a>
+    <form class="form-group" action="filter_bc" method="post">
+        <label for="owner">Owner:</label>
+        <input type="text" name="owner" class="form-control" id="owner" maxlength="32">
+        <label for="card_number">Card Number:</label>
+        <input type="text" name="card_number" class="form-control" id="card_number" maxlength="32">
+        <div data-role = "fieldcontain" class = "ui-hide-label" style="float:left">
+          <label for="min_value">Min Value:</label>
+          <input type="text" name="min_value" class="form-control" id="min_value" maxlength="32">
+        </div>
+        <div data-role = "fieldcontain" class = "ui-hide-label" style="float:left">
+          <label for="max_value">Max Value:</label>
+          <input type="text" name="max_value" class="form-control" id="max_value" maxlength="32">
+        </div>
+        <hr style="clear:both;">
+    <a class=" btn btn-default" href="to_breeze_card" role="button">Reset</a>
+    <button id="btnSignIn" class="btn btn-primary" type="submit">Update Filter</button>
+    </form>
 
+
+    <form class="form-group" action="breezecard_action" method="post">
+        <table class="table table-hover">
+            <thead>
+              <tr>
+                  <td>Card#</td>
+                  <td>Value</td>
+                  <td>Owner</td>
+              </tr>
+            </thead>
+            <tbody>
+            {% for card_o in card_list %}
+
+              <tr>
+                    <td>
+                      <input type="radio" name="row_select" value = {{card_o[0] }}>{{ card_o[0] }}
+                    </td>
+                    <td>{{ card_o[1] }}</td>
+                    <td>{{ card_o[2] }}</td>
+
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    <input type="text" name="set_value" class="form-control" id="set_value" maxlength="32">
+    <button class="btn btn-primary" name = "isset" value = "set_value" id="set_value" type="submit">Set Value of Selected Card</button>
+
+    <input type="text" name="transfer_name" class="form-control" id="transfer_name" maxlength="32">
+    <button class="btn btn-primary" name = "isset" value = "transfer_name" id="transfer_name" type="submit">Transfer Selected Card</button>
+    </form>
 </body>
 </html>

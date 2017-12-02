@@ -9,39 +9,34 @@
 <div style="padding: 3% 5% 5% 5%; width: 80%">
     <h1>Create New Station</h1>
     <div class="container-fluid">
-        <form class="form-group" action="add_city" method="post" enctype="multipart/form-data">
-            <label for="city">Station Name:</label>
-            <input type="text" name="city" class="form-control" id="city" maxlength="32" required>
+        <form class="form-group" action="create_new_station" method="post">
+            <label for="station_name">Station Name:</label>
+            <input type="text" name="station_name" class="form-control" id="station_name" maxlength="32" required>
 
-            <label for="city">Stop ID:</label>
-            <input type="text" name="city" class="form-control" id="city" maxlength="32" required>
+            <label for="station_id">Stop ID:</label>
+            <input type="text" name="station_id" class="form-control" id="station_id" maxlength="32" required>
 
-            <label for="city">Enter Fare:</label>
-            <input type="text" name="city" class="form-control" id="city" maxlength="32" required>
+            <label for="station_fare">Enter Fare:</label>
+            <input type="text" name="station_fare" class="form-control" id="station_fare" maxlength="32" required>
 
-            <form action=" ">
-                <input type="radio" name="Bus" value="Bus" font:24px>Bus Station<br>
-                    <label for="BreezeCardNum">Nearest Intersection: </label> 
-                    <input type="text" class="form-control" name="BreezeCardNum" id="BreezeCardNum" style="width:20%">
-                <input type="radio" name="Train" value="Train" font:24px>Train Station<br>
-            </form>
+            <input type="radio" name="BusOrTrain" value="Bus" font:24px>Bus Station<br>
+                <label for="bus_intersection">Nearest Intersection: </label>
+                <input type="text" class="form-control" name="bus_intersection" id="bus_intersection" style="width:20%">
+            <input type="radio" name="BusOrTrain" value="Train" font:24px>Train Station<br>
 
-            <label for="country">Station Status:</label>
-            <select name="country" class="form-control" id="country" required>
-                {% for o in countries %}
-                    <option value="Bus Station" SELECTED>Open</option>
-                    <option value="Train Station">Closed</option>
-                {% endfor %}
-            </select>
+
+            <label for="station_status">Station Status:</label>
+            <input type="radio" name="station_status" value="Open" font:24px>Open<br>
+            <input type="radio" name="station_status" value="Closed" font:24px>Closed<br>
 
             <br>
             <button id="btnSignIn" class="btn btn-primary" type="submit">Create Station</button>
-            <a class=" btn btn-danger" href="to_login" role="button">Sign out</a>
         </form>
 
     </div>
 
 </div>
+<p id = "feedback"  style="color: red">{{error}}</p>
 
 </body>
 </html>

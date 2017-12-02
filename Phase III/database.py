@@ -99,12 +99,28 @@ def db_bc_exist(num):
 #   the info of this card
 #   format: ('0919948381768459', Decimal('126.50'), 'commuter14')
 #           ('9876543212345670', Decimal('92.50'), None)
-def db_bc_info(num):
-    query = "SELECT * FROM Breezecard WHERE breezecardNum = '%s'"
-    _cursor.execute(query % num)
-    res = _cursor.fetchone()
-    _cursor.fetchall()
-    return res
+def db_bc_info(num = None, username = None, min_value = None, max_value = None):
+    if num is None and username is None and min_value is None and max_value is None:
+        print "database come to all null"
+        query = "SELECT * FROM Breezecard"
+        _cursor.execute(query)
+        res = _cursor.fetchall()
+        return res
+    elif username is None:
+        print "database come to num"
+        query = "SELECT * FROM Breezecard WHERE breezecardNum = '%s'"
+        _cursor.execute(query % num)
+        res = _cursor.fetchall()
+        # _cursor.fetchall()
+        return res
+    else:
+        print "database come to username"
+        query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s'"
+        _cursor.execute(query % username)
+        res = _cursor.fetchall()
+        # _cursor.fetchall()
+
+        return res
 
 # returns
 #   the bc of one user

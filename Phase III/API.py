@@ -14,7 +14,7 @@ returns
     100 - email doesn't match regex
     other - violation caught
 '''
-def register(username, password, email):
+def check_register(username, password, email):
     # if constraint_username_format(username) == 0:
     #     # username doesn't match regex
     #     return 98
@@ -184,6 +184,21 @@ def bc_info(num):
     return out
 
 '''
+get a list of breezecard
+'''
+def get_bc_list(num = None, username = None, min_value = None, max_value = None):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    out = db_bc_info(num, username, min_value, max_value)
+
+    # close connection
+    close_connection()
+
+    return out
+
+'''
 generate a usable breezecard number
 
 :return
@@ -205,12 +220,17 @@ def generate_bc():
         close_connection()
         generate_bc()
 
+
+
 '''
 return a list of all station's info
 :return
     a list of tuples containing station brief info
+    format:
+    stopID, station_name, fare, status, istrain
+    ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
 '''
-def station_list():
+def get_station_list():
     # set up connection
     set_connection()
 
@@ -228,7 +248,7 @@ return a tuple of a station's info
 :return
     a tuple of a station's info
 '''
-def station_info(stopID):
+def get_station_info(stopID):
     # set up connection
     set_connection()
 
@@ -266,9 +286,21 @@ def station_update_fare(stopID, fare):
     return update_status
 
 '''
+insert a new station
+
+returns
+    0 - successfully updated
+    1 - duplication key violation, StopID
+    2 - any violation
+'''
+def insert_station(stopid, name, enterFare, ClosedStatus, isTrain):
+    num = station_insert(stopid, name, enterFare, ClosedStatus, isTrain)
+    return num
+
+'''
 return the passenger flow in a specific time span
 
-format: 
+format:
  stopID, Flow-in, Flow-out, Flow-net, Revenue
 ('31955',   0,        0,        0,      0.0),
 ('35161',   0,        0,        0,      0.0)
@@ -379,4 +411,3 @@ End the trip
 '''
 # def end_trip():
 #     # TODO: ??
-
