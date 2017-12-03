@@ -151,7 +151,6 @@ def station_management():
             station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x:x[1])
             station_list = tuple(station_back_list)
-            print station_list
             return render_template('StationListing.html', station_list = station_list, error="")
         station_id_selected = request.form['row_select']
         print station_id_selected
