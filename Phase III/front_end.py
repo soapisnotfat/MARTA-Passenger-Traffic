@@ -337,6 +337,38 @@ def manage_card_function():
         card_list = get_bc_list(None, logged_user, None, None)
         return render_template('manageCard.html', card_list = card_list, error=error)
 
+@app.route("/to_home")
+def to_home():
+    card_list = get_bc_list(None, logged_user, None, None)
+
+    selected_card = card_list[0]
+
+    card_list_list = list(card_list)
+    card_list_list.remove(selected_card)
+    card_list = tuple(card_list_list)
+    wheter_intrip = inTrip(logged_user)
+    station_list = get_station_list()
+    if wheter_intrip[0]:
+        in_trip = True
+        stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
+        startList = (((stopNAME,wheter_intrip[1][0]), wheter_intrip[1][3]),)
+    else:
+        in_trip = False
+        startList = []
+        for i in station_list:
+            startList.append(((i[1], i[2]), i[0]))
+        startList = tuple(startList)
+    endList = []
+    for i in station_list:
+        endList.append((i[1], i[0]),)
+    startList = tuple(startList)
+    print selected_card
+    return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
+
+@app.route("/to_view_trip_history")
+def to_view_trip_history():
+    trip_list = trip_history(logged_user)
+    return render_template('TripHistory.html', trip_list = trip_list, error="")
 
 
 if __name__ == '__main__':

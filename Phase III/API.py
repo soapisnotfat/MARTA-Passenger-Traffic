@@ -486,6 +486,13 @@ def trip_history(username):
     # set up connection
     set_connection()
 
+    stations = db_station_retrieve()
+    station_id = [item[0] for item in stations]
+    station_name = [item[1] for item in stations]
+    respetive_name = {}
+    for index in range(0, len(station_id)):
+        respetive_name[station_id[index]] = station_name[index]
+
     BCs = db_user_bc_num(username)
     trips = []
     for bc in BCs:
@@ -494,9 +501,14 @@ def trip_history(username):
 
     # close connection
     close_connection()
+    out_list = []
+    for t in trips:
+        if t[4]:
+            out_list.append(tuple([str(t[1]), respetive_name[t[3]], respetive_name[t[4]], float(t[0]), t[2]]))
 
-    out = (tuple([str(t[1]), t[3], t[4], float(t[0]), t[2]] for t in trips))
-
+        else:
+            out_list.append(tuple([str(t[1]), respetive_name[t[3]], "None", float(t[0]), t[2]]))
+    out = tuple(out_list)
     return out
 
 '''
