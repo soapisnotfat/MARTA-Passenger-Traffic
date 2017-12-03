@@ -792,12 +792,12 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
             _cursor.execute(query)
             res = _cursor.fetchall()
             return res
-        elif endTime is None:
+        elif endTime is not None and startTime is None:
             query = "SELECT * FROM Trip WHERE StartTime <= '%s' ORDER BY StartTime"
             _cursor.execute(query % endTime)
             res = _cursor.fetchall()
             return res
-        elif startTime is None:
+        elif startTime is not None and endTime is None:
             query = "SELECT * FROM Trip WHERE StartTime >= '%s' ORDER BY StartTime"
             _cursor.execute(query % startTime)
             res = _cursor.fetchall()
@@ -810,18 +810,16 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
 
     else:
         if startTime is None and endTime is None:
-            print "goint to start and end both None",
-            print bcNum
             query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' ORDER BY StartTime"
             _cursor.execute(query % bcNum)
             res = _cursor.fetchall()
             return res
-        elif endTime is None:
+        elif endTime is not None and startTime is None:
             query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime <= '%s' ORDER BY StartTime"
             _cursor.execute(query % (bcNum, endTime))
             res = _cursor.fetchall()
             return res
-        elif startTime is None:
+        elif startTime is not None and endTime is None:
             query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime >= '%s' ORDER BY StartTime"
             _cursor.execute(query % (bcNum, startTime))
             res = _cursor.fetchall()
@@ -834,5 +832,5 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
 
 # Executions:
 set_connection()
-print(db_bc_delete('1'))
+print(db_trip_retrieve(None, None, '2017-12-03 15:03:06'))
 close_connection()

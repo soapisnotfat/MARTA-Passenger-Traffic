@@ -527,20 +527,19 @@ def trip_history(username, startTime=None, endTime=None):
     BCs = db_user_bc_num(username)
     trips = []
     for bc in BCs:
-        for trip in db_trip_retrieve(bc):
+        for trip in db_trip_retrieve(bc, startTime, endTime):
             trips.append(trip)
 
     # close connection
     close_connection()
-    out_list = []
+    out = []
     for t in trips:
         if t[4]:
-            out_list.append(tuple([str(t[1]), respective_name[t[3]], respective_name[t[4]], float(t[0]), t[2]]))
+            out.append(tuple([str(t[1]), respective_name[t[3]], respective_name[t[4]], float(t[0]), t[2]]))
 
         else:
-            out_list.append(tuple([str(t[1]), respective_name[t[3]], "None", float(t[0]), t[2]]))
-    out = tuple(out_list)
-    return out
+            out.append(tuple([str(t[1]), respective_name[t[3]], "None", float(t[0]), t[2]]))
+    return tuple(out)
 
 '''
 returns
@@ -629,4 +628,4 @@ def end_trip(username, endId):
 
     return status
 
-print(take_trip('7534785562588930', 'N4'))
+print(trip_history('largerabbit', None, '2017-12-03 15:03:06'))
