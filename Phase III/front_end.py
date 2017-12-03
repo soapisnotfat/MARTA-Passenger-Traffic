@@ -102,15 +102,17 @@ def register():
         if p1 != p2:
             return render_template("register.html", error = error)
         else:
-            if buzzcard == "withoutCard":
-                num = generate_bc()
-            else:
-                print "choose with card"
-                num = request.form['BreezeCardNum']
-                print num
-            add_breezecard(num, name)
             result = check_register(name, p1, email)
             if result == 1:
+                if buzzcard == "withoutCard":
+                    num = generate_bc()
+                else:
+                    print "choose with card"
+                    num = request.form['BreezeCardNum']
+                result2 = add_breezecard(num, name)
+                if (result2 != 0):
+                    error = "Cannot add breezecard"
+                    return render_template("register.html", error=error)
                 global logged_user
                 logged_user = name
                 card_list = bc_unsuspended_list(name)
@@ -134,7 +136,7 @@ def register():
                 return render_template("home.html")
             else:
                 error = "Unknown error occurred"
-            return render_template("register.html", error=error)
+                return render_template("register.html", error=error)
 
 @app.route("/to_station_management")
 def to_station_management():
@@ -213,6 +215,8 @@ def create_new_station():
         if result == 0:
             station_list = get_station_list()
             return render_template('StationListing.html', station_list = station_list, error = "")
+        elif result == 1000:
+            return render_template('CreateNewStation.html', error = "station fare is not valid")
         else:
             return render_template('CreateNewStation.html', error = "something goes wrong")
 
@@ -227,10 +231,10 @@ def update_station_detail():
             stop_id = request.form['station_id']
             result = station_update_fare(stop_id, float(new_fare))
             error = ""
-            if result == 0:
-                error = "successfully updated fare"
+            if result == 1000:
+                error = "cannot update fare because it is not between [0, 50.0]"
             else:
-                error = "cannot update fare"
+                error = "whoops, something wrong with updating fare"
             station_list = get_station_list()
             return render_template('StationListing.html', station_list = station_list, error = error)
         else:
@@ -317,7 +321,16 @@ def update_passenger_flow():
         else:
             start_time = request.form['start_time']
             end_time = request.form['end_time']
-            passenger_list = passenger_flow(start_time, end_time)
+            # TODO: TEST
+            if start_time == "" and end_time == "":
+                passenger_list = passenger_flow()
+            elif start_time == "":
+                passenger_list = passenger_flow(None, end_time)
+            elif end_time == "":
+                passenger_list = passenger_flow(start_time, None)
+            else:
+                passenger_list = passenger_flow(start_time, end_time)
+            # passenger_list = passenger_flow(start_time, end_time)
         return render_template('PassengerFlowReport.html', passenger_list = passenger_list, error = "")
 
 
@@ -401,7 +414,9 @@ def manage_card_function():
             card_selected_num = request.form['card_selected']
             add_money = float(request.form['money_value'])
             result = bc_add_value(card_selected_num, add_money)
-            if result != 0:
+            if result == 1000:
+                error = "cannot add too much time"
+            elif result != 0:
                 error = "cannot add money to this card"
         card_list = get_bc_list("", logged_user, "", "")
         card_back_list = list(card_list)
@@ -455,10 +470,18 @@ def update_view_history():
     error = "successfully changed"
     if request.method == "POST":
         button_chosen = request.form['update_view_history']
+        # TODO: Test
         if button_chosen == 'update_filter':
             start_time = request.form['start_time']
             end_time = request.form['end_time']
-            trip_list = trip_history(logged_user)
+            if start_time == "" and end_time == "":
+                trip_list = trip_history(logged_user)
+            elif start_time == "":
+                trip_list = trip_history(logged_user, None, end_time)
+            elif end_time == "":
+                trip_list = trip_history(logged_user, start_time, None)
+            else:
+                trip_list = trip_history(logged_user, start_time, end_time)
             return render_template('TripHistory.html', trip_list = trip_list, error=error)
         else:
             trip_list = trip_history(logged_user)
