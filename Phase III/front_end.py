@@ -367,7 +367,8 @@ def balance_or_start():
         card_list_list.remove(selected_card)
         card_list = tuple(card_list_list)
         wheter_intrip = inTrip(logged_user)
-        station_list = get_station_list()
+        # TODO: test open list
+        station_list = get_station_list(1)
         if wheter_intrip[0]:
             in_trip = True
             stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
@@ -441,7 +442,7 @@ def to_home():
     card_list_list.remove(selected_card)
     card_list = tuple(card_list_list)
     wheter_intrip = inTrip(logged_user)
-    station_list = get_station_list()
+    station_list = get_station_list(1)
     if wheter_intrip[0]:
         in_trip = True
         stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
