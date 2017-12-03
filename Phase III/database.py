@@ -411,7 +411,7 @@ def station_delete(stopID):
 # format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
 def db_station_retrieve(stopID=None):
     if stopID is None:
-        query = "SELECT * FROM Station ORDDER BY StopID"
+        query = "SELECT * FROM Station ORDER BY StopID"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
@@ -506,6 +506,25 @@ def busStationIntersection_insert(stopid, intersection=None):
             else:
                 # other violation
                 return 2
+
+# retrieve intersection info
+#
+# returns
+#     a tuple of one station's info
+#     a tuple of tuples of stations' info
+# format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
+def intersection_retrieve(stopID=None):
+    if stopID is None:
+        query = "SELECT * FROM BusStationIntersection ORDER BY StopID"
+        _cursor.execute(query)
+        res = _cursor.fetchall()
+        return res
+    else:
+        query = "SELECT * FROM BusStationIntersection WHERE StopID = '%s'"
+        _cursor.execute(query % stopID)
+        res = _cursor.fetchone()
+        _cursor.fetchall()
+        return res
 
 # insert tuples to Conflict
 # @param: String: Username
@@ -661,5 +680,5 @@ def db_trip_retrieve(bcNum=None):
 
 # Executions:
 set_connection()
-print(db_user_bc_info('kellis'))
+print(intersection_retrieve(''))
 close_connection()

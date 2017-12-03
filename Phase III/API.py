@@ -400,6 +400,21 @@ def get_station_info(stopID):
     return out
 
 '''
+return station's intersection info
+'''
+def get_intersection(stopID):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    out = intersection_retrieve(stopID)
+
+    # close connection
+    close_connection()
+
+    return out
+
+'''
 return enterfare of station
 '''
 def station_fare(stopID):
