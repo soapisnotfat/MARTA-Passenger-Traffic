@@ -534,7 +534,7 @@ def db_station_retrieve(stopID=None, openStatus=None):
             res = _cursor.fetchall()
             return res
         else:
-            query = "SELECT S.*, B.Intersection FROM Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID AND S.ClosedStatus = 0 ORDER BY StopID"
+            query = "SELECT S.*, B.Intersection FROM Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID WHERE S.ClosedStatus = 0 ORDER BY StopID"
             _cursor.execute(query)
             res = _cursor.fetchall()
             return res
@@ -546,7 +546,7 @@ def db_station_retrieve(stopID=None, openStatus=None):
             _cursor.fetchall()
             return res
         else:
-            query = "SELECT S.*, B.Intersection FROM (Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID AND S.ClosedStatus = 0) WHERE S.StopID = '%s'"
+            query = "SELECT S.*, B.Intersection FROM Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID WHERE S.ClosedStatus = 0 AND S.StopID = '%s'"
             _cursor.execute(query)
             res = _cursor.fetchall()
             return res
@@ -843,5 +843,5 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
 
 # Executions:
 set_connection()
-print(db_user_isAdmin('kellis'))
+print(db_station_retrieve('P4'))
 close_connection()
