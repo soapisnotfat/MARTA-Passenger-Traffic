@@ -433,11 +433,11 @@ def passenger_flow(startsTime=None, endsTime=None):
     # initialize flow_in and flow-out
     station_id = [item[0] for item in stations]
     station_name = [item[1] for item in stations]
-    respetive_name = {}
+    respective_name = {}
     flow_in = {}
     flow_out = {}
     for index in range(0, len(station_id)):
-        respetive_name[station_id[index]] = station_name[index]
+        respective_name[station_id[index]] = station_name[index]
         flow_in[station_id[index]] = 0
         flow_out[station_id[index]] = 0
 
@@ -474,7 +474,7 @@ def passenger_flow(startsTime=None, endsTime=None):
     # put all together
     out = []
     for i in station_id:
-        out.append((respetive_name[i], flow_in[i], flow_out[i], flow_net[i], revenue[i]))
+        out.append((respective_name[i], flow_in[i], flow_out[i], flow_net[i], revenue[i]))
 
     return tuple(out)
 
@@ -513,7 +513,6 @@ format:
 
 '''
 def trip_history(username, startTime=None, endTime=None):
-    # TODO: test
     # set up connection
     set_connection()
 
@@ -626,4 +625,4 @@ def end_trip(username, endId):
 
     return status
 
-print(conflict_list())
+print(trip_history('sandrapatel', '2017-10-27 00:00:00', '2017-10-29 00:00:00'))

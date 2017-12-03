@@ -779,44 +779,44 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
             res = _cursor.fetchall()
             return res
         elif endTime is None:
-            query = "SELECT * FROM Trip WHERE StartTime < '%s' ORDER BY StartTime"
+            query = "SELECT * FROM Trip WHERE StartTime <= '%s' ORDER BY StartTime"
             _cursor.execute(query % endTime)
             res = _cursor.fetchall()
             return res
         elif startTime is None:
-            query = "SELECT * FROM Trip WHERE StartTime > '%s' ORDER BY StartTime"
+            query = "SELECT * FROM Trip WHERE StartTime >= '%s' ORDER BY StartTime"
             _cursor.execute(query % startTime)
             res = _cursor.fetchall()
             return res
         else:
-            query = "SELECT * FROM Trip WHERE StartTime > '%s' AND StartTime < '%s' ORDER BY StartTime"
+            query = "SELECT * FROM Trip WHERE StartTime >= '%s' AND StartTime <= '%s' ORDER BY StartTime"
             _cursor.execute(query % (startTime, endTime))
             res = _cursor.fetchall()
             return res
 
     else:
         if startTime is None and endTime is None:
-            query =  "SELECT * FROM Trip WHERE BreezecardNum = '%s' ORDER BY StartTime"
+            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' ORDER BY StartTime"
             _cursor.execute(query % bcNum)
             res = _cursor.fetchall()
             return res
         elif endTime is None:
-            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime < '%s' ORDER BY StartTime"
+            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime <= '%s' ORDER BY StartTime"
             _cursor.execute(query % (bcNum, endTime))
             res = _cursor.fetchall()
             return res
         elif startTime is None:
-            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime > '%s' ORDER BY StartTime"
+            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime >= '%s' ORDER BY StartTime"
             _cursor.execute(query % (bcNum, startTime))
             res = _cursor.fetchall()
             return res
         else:
-            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime > '%s' AND StartTime < '%s' ORDER BY StartTime"
+            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime >= '%s' AND StartTime <= '%s' ORDER BY StartTime"
             _cursor.execute(query % (bcNum, startTime, endTime))
             res = _cursor.fetchall()
             return res
 
 # Executions:
-set_connection()
-print(trip_insert(2.75, '2017-11-5 16:21:49', '0524807425551662', 'N11', ))
-close_connection()
+# set_connection()
+# print(db_trip_retrieve(None, '2017-10-27 00:00:00', '2017-10-29 00:00:00'))
+# close_connection()
