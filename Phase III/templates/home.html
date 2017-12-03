@@ -35,7 +35,7 @@
         {%else%}
             <p>Start At</p>
             <select name="start_selected">
-                {% or startStation in startList %}
+                {% for startStation in startList %}
                     <option name="start_selected" value = {{startStation[1]}}> {{ startStation[0][0] }} ${{ startStation[0][1] }} </option>
                 {% endfor %}
             </select>
