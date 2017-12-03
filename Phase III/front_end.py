@@ -95,12 +95,18 @@ def register():
         p1 = request.form['p1']
         p2 = request.form['p2']
         buzzcard = request.form['withCard']
+        if constraint_email_format(email) == 0:
+            return render_template("register.html", error = "Email does not meet with format.")
+        if constraint_username_format(name) == 0:
+            return render_template("register.html", error = "Username does not meet with format.")
         print p1
         print p2
 
         error = ""
         if p1 != p2:
             return render_template("register.html", error = "Passwords do not match")
+        elif constraint_password_format(p1) == 0:
+            return render_template("register.html", error = "Passwords does not meet with format")
         else:
             result = check_register(name, p1, email)
             if result == 1:
@@ -399,10 +405,15 @@ def manage_card_function():
     if request.method == "POST":
         button_chosen = request.form['manage_card_function']
         if button_chosen == "remove":
-            card_selected_num = request.form['card_selected']
-            result = remove_breezecard(card_selected_num)
-            if result != 0:
+            card_list = get_bc_list("", logged_user, "", "")
+            card_len = len(card_list)
+            if card_len == 1:
                 error = "cannot remove card"
+            else:
+                card_selected_num = request.form['card_selected']
+                result = remove_breezecard(card_selected_num)
+                if result != 0:
+                    error = "cannot remove card"
         elif button_chosen == "add_card":
             print "come to add card"
             card_selected_num = request.form['add_card']
