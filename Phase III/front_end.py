@@ -360,7 +360,7 @@ def filter_bc_and_isset():
                         e = tuple(new_e)
                     bc_back_list.append(e)
             bc_list = tuple(bc_back_list)
-            return render_template('BreezeCardManage.html', card_list = bc_list, error = "", show_suspended = show_suspended_status)
+            return render_template('BreezeCardManage.html', card_list = bc_list, error = error, show_suspended = show_suspended_status)
 
 @app.route("/to_passenger_flow_report")
 def to_passenger_flow_report():
