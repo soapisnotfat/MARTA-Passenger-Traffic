@@ -71,10 +71,9 @@ def login(username, password):
 user adds breezecard
 - used for register page, in add breezecard section
 :returns
-    0 - the card doesn't exist
+    0 - successfully add bc to user
     1 - conflict caught
-    2 - successfully add bc to user
-    3 - any other violations
+    2 - any other violations
 '''
 def add_breezecard(num, username):
     # set up connection
@@ -83,6 +82,7 @@ def add_breezecard(num, username):
     # execute the query
     bc_exist = db_bc_exist(num)
     if bc_exist == 0:
+        bc_insert(num, 0, username)
         out = 0
     else:
         bc_info = db_bc_info(num, "", "", "")
@@ -95,9 +95,9 @@ def add_breezecard(num, username):
             # update new holder
             update_status = db_bc_update_holder(num, username)
             if update_status == 0:
-                out = 2
+                out = 0
             else:
-                out = 3
+                out = 2
         print db_bc_info("", username, "", "")
 
     # close connection
@@ -174,7 +174,6 @@ add a certain value to a breezecard
     1 - any violation
 '''
 def bc_add_value(num, value):
-
     # set up connection
     set_connection()
 
@@ -297,12 +296,15 @@ return a list of all station's info
     stopID, station_name, fare, status, istrain
     ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
 '''
-def get_station_list():
+def get_station_list(isOpen=None):
     # set up connection
     set_connection()
 
     # execute the query
-    out = db_station_retrieve()
+    if isOpen is None:
+        out = db_station_retrieve()
+    else:
+        out = db_station_retrieve(None, isOpen)
 
     # close connection
     close_connection()

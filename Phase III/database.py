@@ -501,18 +501,30 @@ def station_delete(stopID):
 #     a tuple of one station's info
 #     a tuple of tuples of stations' info
 # format: ('N4', 'Midtown', Decimal('5.00'), 0, 1, None)
-def db_station_retrieve(stopID=None):
+def db_station_retrieve(stopID=None, openStatus=None):
     if stopID is None:
-        query = "SELECT S.*, B.Intersection FROM Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID ORDER BY StopID"
-        _cursor.execute(query)
-        res = _cursor.fetchall()
-        return res
+        if openStatus is None:
+            query = "SELECT S.*, B.Intersection FROM Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID ORDER BY StopID"
+            _cursor.execute(query)
+            res = _cursor.fetchall()
+            return res
+        else:
+            query = "SELECT S.*, B.Intersection FROM Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID AND S.ClosedStatus = 0 ORDER BY StopID"
+            _cursor.execute(query)
+            res = _cursor.fetchall()
+            return res
     else:
-        query = "SELECT S.*, B.Intersection FROM (Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID) WHERE S.StopID = '%s'"
-        _cursor.execute(query % stopID)
-        res = _cursor.fetchone()
-        _cursor.fetchall()
-        return res
+        if openStatus is None:
+            query = "SELECT S.*, B.Intersection FROM (Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID) WHERE S.StopID = '%s'"
+            _cursor.execute(query % stopID)
+            res = _cursor.fetchone()
+            _cursor.fetchall()
+            return res
+        else:
+            query = "SELECT S.*, B.Intersection FROM (Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID AND S.ClosedStatus = 0) WHERE S.StopID = '%s'"
+            _cursor.execute(query)
+            res = _cursor.fetchall()
+            return res
 
 # update the enter fare of a station
 #
@@ -806,5 +818,5 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
 
 # Executions:
 set_connection()
-print(db_user_inTrip('kellis'))
+print(trip_insert(2.75, '2017-11-5 16:21:49', '0524807425551662', 'N11', ))
 close_connection()
