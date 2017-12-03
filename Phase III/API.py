@@ -68,6 +68,25 @@ def login(username, password):
     return login_response
 
 '''
+function that check if user is an admin
+
+returns:
+  0 - is not
+  1 - is
+'''
+def isAdmin(username):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    isAdmin = db_user_isAdmin(username)
+
+    # close connection
+    close_connection()
+
+    return isAdmin
+
+'''
 user adds breezecard
 - used for register page, in add breezecard section
 :returns

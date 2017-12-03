@@ -54,6 +54,17 @@ def close_connection():
 BASE LAYER FUNCTIONS providing service for upper lay functions
 '''
 
+# function that check if user is an admin
+#
+# returns:
+#   0 - is not
+#   1 - is
+def db_user_isAdmin(username):
+    query = "SELECT IsAdmin FROM User WHERE Username = '%s'"
+    response = _cursor.execute(query % username)
+
+    return _cursor.fetchall()[0][0]
+
 # login function that check the login status
 #
 # returns:
@@ -832,5 +843,5 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
 
 # Executions:
 set_connection()
-print(db_trip_retrieve(None, None, '2017-12-03 15:03:06'))
+print(db_user_isAdmin('kellis'))
 close_connection()
