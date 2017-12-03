@@ -15,7 +15,7 @@ def main():
     """
     # TODO: check whether set up database
     set_connection()
-    return render_template('login.html')
+    return render_template('login.html', error = "")
 
 @app.route("/to_login")
 def to_login():
@@ -24,7 +24,7 @@ def to_login():
     """
     global logged_user
     logged_user = ""
-    return render_template("login.html")
+    return render_template("login.html", error = "")
 
 @app.route('/sign_in', methods=['POST', 'GET'])
 def sign_in():
@@ -43,7 +43,7 @@ def sign_in():
         if num == 1:
             global logged_admin
             logged_admin = _name
-            return render_template('admin.html')
+            return render_template('admin.html', error = "")
         elif num == 2:
             global logged_user
             logged_user = _name
@@ -73,7 +73,7 @@ def sign_in():
             print selected_card
             return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
         else:
-            return render_template("login.html", error="Credentials Incorrect")
+            return render_template("login.html", error="Cannot login, try again")
 
 @app.route("/to_register")
 def to_register():
@@ -98,9 +98,9 @@ def register():
         print p1
         print p2
 
-        error = "Passwords do not match"
+        error = ""
         if p1 != p2:
-            return render_template("register.html", error = error)
+            return render_template("register.html", error = "Passwords do not match")
         else:
             result = check_register(name, p1, email)
             if result == 1:
@@ -133,9 +133,8 @@ def register():
                     endList.append((i[1], i[0]),)
                 startList = tuple(startList)
                 return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "")
-                return render_template("home.html")
             else:
-                error = "Unknown error occurred"
+                error = "Cannot register, try again"
                 return render_template("register.html", error=error)
 
 @app.route("/to_station_management")
@@ -184,7 +183,7 @@ def station_management():
         print station_info_tuple
         intersection_name = station_info_tuple[-1]
         not_have_intersection = (intersection_name is None)
-        return render_template('StationDetail.html', station_info_tuple = station_info_tuple, not_have_intersection = not_have_intersection, intersection_name = intersection_name)
+        return render_template('StationDetail.html', station_info_tuple = station_info_tuple, not_have_intersection = not_have_intersection, intersection_name = intersection_name, error = "")
 
 @app.route("/to_create_new_station")
 def to_create_new_station():
@@ -254,7 +253,7 @@ def update_station_detail():
 
 @app.route("/to_admin")
 def to_admin():
-    return render_template('admin.html')
+    return render_template('admin.html', error = "")
 
 @app.route("/to_suspend_card")
 def to_suspend_card():
@@ -351,7 +350,6 @@ def balance_or_start():
                 error = "cannot take the trip"
             else:
                 error = "successfully take trip"
-            print error
         elif button_chosen == "user_end_trip":
             end_station = request.form['end_selected']
             print end_station
@@ -468,7 +466,6 @@ def to_view_trip_history():
 @app.route("/update_view_history", methods=["POST"])
 def update_view_history():
     print "update_view_history start"
-    error = "successfully changed"
     if request.method == "POST":
         button_chosen = request.form['update_view_history']
         # TODO: Test
@@ -483,7 +480,7 @@ def update_view_history():
                 trip_list = trip_history(logged_user, start_time, None)
             else:
                 trip_list = trip_history(logged_user, start_time, end_time)
-            return render_template('TripHistory.html', trip_list = trip_list, error=error)
+            return render_template('TripHistory.html', trip_list = trip_list, error="")
         else:
             trip_list = trip_history(logged_user)
             trip_back_list = list(trip_list)
