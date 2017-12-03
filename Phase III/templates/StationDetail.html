@@ -13,15 +13,33 @@
     </h1>
     <p>
         <label for="fare">Fare</label>
+        <select name="station_id">
+        <option value = {{station_info_tuple[0]}} selected> {{station_info_tuple[0]}}</option>
+        </select>
         <input type="text" name="fare" class="form-control" id="fare" value = {{station_info_tuple[2]}}>
-        <a class=" btn btn-default">Update Fare</a><br>
+        <button class="btn btn-primary" id="update_fare" name = "update_station_detail" value = "update_fare" type="submit">Update Fare</button>
         {% if not_have_intersection %}
         Nearest Intersection: Not available<br>
         {%else%}
         Nearest Intersection: {{intersection_name}}<br>
         {%endif%}
         <br>
-        Status: {{station_info_tuple[3]}}<br>
+        {% if station_info_tuple[3] == 0 %}
+        Status: <br>
+            <select name="status_selected">
+            <option value = '0' selected>Open</option>
+            <option value = '1'> Close</option>
+            </select>
+        {%else%}
+        Status<br>
+            <select name="status_selected">
+            <option value = '0'>Open</option>
+            <option value = '1' selected> Close</option>
+            </select>
+        {%endif%}
+        <button class="btn btn-primary" id="update_status" name = "update_station_detail" value = "update_status" type="submit">Update Status</button>
+
+
     </p>
     <a class=" btn btn-default" href="/to_station_management" role="button">Go Back</a>
   </form>

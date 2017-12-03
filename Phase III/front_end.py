@@ -146,45 +146,33 @@ def station_management():
     print "station_management start"
     if request.method == "POST":
         button_chosen = request.form['station_management']
+        station_list = get_station_list()
+        station_back_list = list(station_list)
         if button_chosen == "station_name_up":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x:x[1])
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         elif button_chosen == "stop_id_up":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x:x[0])
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         elif button_chosen == "stop_id_down":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x: x[0], reverse=True)
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         elif button_chosen == "fare_up":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x: x[2])
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         elif button_chosen == "fare_down":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x: x[2], reverse=True)
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         elif button_chosen == "status_up":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x: x[3])
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         elif button_chosen == "status_down":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x: x[3], reverse = True)
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
@@ -192,7 +180,7 @@ def station_management():
         print station_id_selected
         station_info_tuple = get_station_info(station_id_selected)
         print station_info_tuple
-        intersection_name = get_intersection(station_id_selected)
+        intersection_name = station_info_tuple[-1]
         not_have_intersection = (intersection_name is None)
         return render_template('StationDetail.html', station_info_tuple = station_info_tuple, not_have_intersection = not_have_intersection, intersection_name = intersection_name)
 
@@ -208,23 +196,57 @@ def create_new_station():
         station_id = request.form['station_id']
         station_fare = request.form['station_fare']
         BusOrTrain = request.form['BusOrTrain']
-        if BusOrTrain == 'Bus':
-            train_status = 0
-        else:
-            train_status = 1
         station_status = request.form['station_status']
         if station_status == 'Open':
             close_status = 0
         else:
             close_status = 1
-        # TODO: create new station into database
-        result = insert_station(str(station_id), str(station_name), float(station_fare), int(close_status), int(train_status))
-        print str(station_name) + str(station_id) + str(station_fare) + str(close_status) + str(train_status)
+        result = -1
+        if BusOrTrain == 'Bus':
+            train_status = 0
+            bus_intersection = request.form['bus_intersection']
+            result = insert_station(station_id, station_name, float(station_fare), int(close_status), int(train_status), bus_intersection)
+        else:
+            train_status = 1
+            result = insert_station(station_id, station_name, float(station_fare), int(close_status), int(train_status))
+        # print str(station_name) + str(station_id) + str(station_fare) + str(close_status) + str(train_status)
         if result == 0:
             station_list = get_station_list()
-            return render_template('StationListing.html', station_list = station_list)
+            return render_template('StationListing.html', station_list = station_list, error = "")
         else:
             return render_template('CreateNewStation.html', error = "something goes wrong")
+
+
+@app.route("/update_station_detail", methods=["POST"])
+def update_station_detail():
+    print "update_station_detail start"
+    if request.method == "POST":
+        button_chosen = request.form['update_station_detail']
+        if button_chosen == 'update_fare':
+            new_fare = request.form['fare']
+            stop_id = request.form['station_id']
+            result = station_update_fare(stop_id, float(new_fare))
+            error = ""
+            if result == 0:
+                error = "successfully updated fare"
+            else:
+                error = "cannot update fare"
+            station_list = get_station_list()
+            return render_template('StationListing.html', station_list = station_list, error = error)
+        else:
+            new_status = request.form['status_selected']
+            stop_id = request.form['station_id']
+            result = station_update_closedstatus(stop_id, int(new_status))
+            error = ""
+            if result == 0:
+                error = "successfully updated status"
+            else:
+                error = "cannot update status"
+            station_list = get_station_list()
+            return render_template('StationListing.html', station_list = station_list, error = error)
+
+
+
 
 @app.route("/to_admin")
 def to_admin():
