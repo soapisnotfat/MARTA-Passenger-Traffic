@@ -251,9 +251,7 @@ def update_station_detail():
             stop_id = request.form['station_id']
             result = station_update_closedstatus(stop_id, int(new_status))
             error = ""
-            if result == 0:
-                error = "successfully updated status"
-            else:
+            if result != 0:
                 error = "cannot update status"
             station_list = get_station_list()
             return render_template('StationListing.html', station_list = station_list, error = error)
@@ -324,14 +322,22 @@ def filter_bc_and_isset():
             if (button_chosen == "transfer_name"):
                 print "come to transfer"
                 username = request.form['transfer_name']
-                result = bc_change_user(stationId, username)
-                if result == 1:
-                    error = "Whoops, something goes wrong"
+                original_username = bc_info(stationId)
+                original_username = original_username[0]
+                original_username = original_username[2]
+                whether_in_trip = inTrip(original_username)
+                if whether_in_trip[0] and whether_in_trip[1][2] == stationId:
+                    error = "You cannot transfer a card which is in_trip."
+                else:
+                    result = bc_change_user(stationId, username)
+                    if result != 0:
+                        error = "Whoops, cannot transfer to this person."
             elif (button_chosen == 'set_value'):
                 print "come to set value"
                 set_value = request.form['set_value']
+                # TODO: check whether new value is admin.
                 result = bc_change_value(stationId, float(set_value))
-                if result == 1:
+                if result != 0:
                     error = "Whoops, something goes wrong"
             else:
                 error = "some error about clicking"
@@ -354,7 +360,7 @@ def filter_bc_and_isset():
                         e = tuple(new_e)
                     bc_back_list.append(e)
             bc_list = tuple(bc_back_list)
-            return render_template('BreezeCardManage.html', card_list = bc_list, error = "", show_suspended = show_suspended_status)
+            return render_template('BreezeCardManage.html', card_list = bc_list, error = error, show_suspended = show_suspended_status)
 
 @app.route("/to_passenger_flow_report")
 def to_passenger_flow_report():
@@ -364,7 +370,7 @@ def to_passenger_flow_report():
 @app.route("/update_passenger_flow", methods=["POST"])
 def update_passenger_flow():
     print "update_passenger_flow start"
-    error = "successfully changed"
+    error = ""
     if request.method == "POST":
         button_chosen = request.form['update_passenger_flow']
         if button_chosen == 'station_name_up':
@@ -403,8 +409,6 @@ def balance_or_start():
             error = ""
             if result != 0:
                 error = "cannot take the trip"
-            else:
-                error = "successfully take trip"
         elif button_chosen == "user_end_trip":
             end_station = request.form['end_selected']
             print end_station
@@ -467,7 +471,7 @@ def manage_card_function():
             if result != 0:
                 error = "cannot add card to user"
             else:
-                error = "add card successfully"
+                error = ""
 
         elif button_chosen == "add_value":
             card_selected_num = request.form['card_selected']
@@ -565,8 +569,6 @@ def suspended_reassign():
                 new_owner = suspended_card_selected[1]
             else:
                 new_owner = suspended_card_selected[3]
-            print "new_owner is ",
-            print new_owner
             result = bc_change_user(suspended_card_num, new_owner)
             if result != 0:
                 error = "did not change successfully"
