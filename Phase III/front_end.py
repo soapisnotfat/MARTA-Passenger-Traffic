@@ -430,8 +430,12 @@ def balance_or_start():
             end_station = request.form['end_selected']
             result = end_trip(logged_user, end_station)
             error = ""
-            if result != 0:
-                error = "cannot end the trip"
+            if result == 1:
+                error = "some error happens when ending the trip"
+            elif result == 2:
+                error = "You must end at the same stop type as ur start station"
+            elif result == 3:
+                error = "You are not in a trip"
         selected_card = bc_info(selected_card_num)
         selected_card = selected_card[0]
         bc_list = get_bc_list("", logged_user, "", "")

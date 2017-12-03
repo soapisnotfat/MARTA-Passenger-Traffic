@@ -626,13 +626,20 @@ def take_trip(bcNum, startID):
 End the trip
 
 :returns
-    0 - is not in trip
-    1 - end trip successfully
+    0 - end trip successfully
+    1 - some error
+    2 - must select same stop type
+    3 - not in a trip
 '''
 def end_trip(username, endId):
     current_trip = inTrip(username)
     if not current_trip[0]:
-        return 0
+        return 3
+    start_ID = current_trip[1][3]
+    start_station_info = get_station_info(start_ID)
+    end_station_info = get_station_info(endId)
+    if start_station_info[4] != end_station_info[4]:
+        return 2
     trip_detail = current_trip[1]
     # set up connection
     set_connection()
