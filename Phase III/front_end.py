@@ -188,7 +188,8 @@ def to_admin():
 
 @app.route("/to_suspend_card")
 def to_suspend_card():
-    return render_template('admin.html')
+    suspend_card_list = conflict_list()
+    return render_template('suspended.html', card_list = suspend_card_list, error = "")
 
 @app.route("/to_breeze_card")
 def to_breeze_card():
@@ -378,7 +379,32 @@ def update_view_history():
         start_time = request.form['start_time']
         end_time = request.form['end_time']
         trip_list = trip_history(logged_user)
-        return render_template('TripHistory.html', trip_list = trip_list, error="")
+        return render_template('TripHistory.html', trip_list = trip_list, error=error)
+
+@app.route("/suspended_reassign", methods=["POST"])
+def suspended_reassign():
+    print "suspended_reassign start"
+    error = ""
+    if request.method == "POST":
+        suspended_card_num =request.form['card_selected']
+        button_chosen = request.form['suspended_reassign']
+        suspend_card_list = conflict_list()
+        suspended_card_selected = ()
+        for i in suspend_card_list:
+            if i[0] == suspended_card_num:
+                suspended_card_selected = i
+
+        if button_chosen == "set_new_owner":
+            new_owner = suspended_card_selected[1]
+        else:
+            new_owner = suspended_card_selected[3]
+        print "new_owner is ",
+        print new_owner
+        result = bc_change_user(suspended_card_num, new_owner)
+        if result != 0:
+            error = "did not change successfully"
+        suspend_card_list = conflict_list()
+        return render_template('suspended.html', card_list = suspend_card_list, error = error)
 
 
 if __name__ == '__main__':
