@@ -211,92 +211,7 @@ def get_bc_list(num, username, min_value, max_value):
     set_connection()
 
     # execute the query
-    if num == "" \
-            and username == "" \
-            and min_value == "" \
-            and max_value == "":
-        out = db_bc_info()
-    elif num != ""\
-            and username == "" \
-            and min_value == "" \
-            and max_value == "":
-        out = db_bc_info(num)
-    elif num == "" \
-            and username != "" \
-            and min_value == "" \
-            and max_value == "":
-        out = db_user_bc_info(username)
-    elif num != "" \
-            and username != "" \
-            and min_value == "" \
-            and max_value == "":
-        out = [item for item in db_user_bc_info(username) if num == item[0]]
-
-    elif num == "" \
-            and username == "" \
-            and min_value != "" \
-            and max_value != "":
-        out = [item for item in db_bc_info() if min_value <= float(item[1]) <= max_value]
-    elif num != "" \
-            and username == "" \
-            and min_value != "" \
-            and max_value != "":
-        out = [item for item in db_bc_info(num) if min_value <= float(item[1]) <= max_value]
-    elif num == ""  \
-            and username != "" \
-            and min_value != "" \
-            and max_value != "":
-        out = [item for item in db_user_bc_info(username) if min_value <= float(item[1]) <= max_value]
-    elif num != "" \
-            and username != "" \
-            and min_value != "" \
-            and max_value != "":
-        temp = [item for item in db_user_bc_info(username) if num == item[0]]
-        out = [item for item in temp if min_value <= float(item[1]) <= max_value]
-
-    elif num == "" \
-            and username == "" \
-            and min_value != ""\
-            and max_value == "":
-        out = [item for item in db_bc_info() if min_value <= float(item[1])]
-    elif num != "" \
-            and username == "" \
-            and min_value != "" \
-            and max_value == "":
-        out = [item for item in db_bc_info(num) if min_value <= float(item[1])]
-    elif num == "" \
-            and username != "" \
-            and min_value != "" \
-            and max_value == "":
-        out = [item for item in db_user_bc_info(username) if min_value <= float(item[1])]
-    elif num != "" \
-            and username != "" \
-            and min_value != "" \
-            and max_value == "":
-        temp = [item for item in db_user_bc_info(username) if num == item[0]]
-        out = [item for item in temp if min_value <= float(item[1])]
-
-    elif num == "" \
-            and username == "" \
-            and min_value == "" \
-            and max_value != "":
-        out = [item for item in db_bc_info() if float(item[1]) <= max_value]
-    elif num != "" \
-            and username == "" \
-            and min_value == "" \
-            and max_value != "":
-        out = [item for item in db_bc_info(num) if float(item[1]) <= max_value]
-    elif num == "" \
-            and username != "" \
-            and min_value == "" \
-            and max_value != "":
-        out = [item for item in db_user_bc_info(username) if float(item[1]) <= max_value]
-    elif num != "" \
-            and username != "" \
-            and min_value == "" \
-            and max_value != "":
-        temp = [item for item in db_user_bc_info(username) if num == item[0]]
-        out = [item for item in temp if float(item[1]) <= max_value]
+    out = db_bc_info(num, username, min_value, max_value)
 
     # close connection
     close_connection()
@@ -313,7 +228,7 @@ def bc_unsuspended_list(username):
     set_connection()
 
     # execute the query
-    temp = db_user_bc_info(username)
+    temp = db_bc_info('', username, '', '')
     out = [item for item in temp if db_bc_is_suspended(item[0]) == 0]
 
     # close connection
@@ -393,21 +308,6 @@ def get_station_info(stopID):
 
     # execute the query
     out = db_station_retrieve(stopID)
-
-    # close connection
-    close_connection()
-
-    return out
-
-'''
-return station's intersection info
-'''
-def get_intersection(stopID):
-    # set up connection
-    set_connection()
-
-    # execute the query
-    out = intersection_retrieve(stopID)
 
     # close connection
     close_connection()
@@ -570,8 +470,7 @@ def conflict_list():
     conflicts = db_conflict_retrieve()
     out = []
     for c in conflicts:
-        previous_owner = db_bc_info(c[1])[0][2]
-        temp = [c[1], c[0], str(c[2]), previous_owner]
+        temp = [c[0], c[1], str(c[2]), c[3]]
         out.append(tuple(temp))
 
     # close connection
@@ -700,3 +599,5 @@ def end_trip(username, endId):
     close_connection()
 
     return status
+
+print(conflict_list())

@@ -99,31 +99,144 @@ def db_bc_exist(num):
 #   the info of this card
 #   format: ('0919948381768459', Decimal('126.50'), 'commuter14')
 #           ('9876543212345670', Decimal('92.50'), None)
-def db_bc_info(num=None):
-    if num is None:
-        query = "SELECT * FROM Breezecard ORDER BY BreezecardNum ASC"
-        _cursor.execute(query)
-        res = _cursor.fetchall()
-        return res
-
-    else:
-        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s'"
+def db_bc_info(num, username, min_value, max_value):
+    if num == "" \
+            and username == "" \
+            and min_value == "" \
+            and max_value == "":
+        if num is None:
+            query = "SELECT * FROM Breezecard ORDER BY BreezecardNum ASC"
+            _cursor.execute(query)
+            res = _cursor.fetchall()
+            return res
+    elif num != "" \
+            and username == "" \
+            and min_value == "" \
+            and max_value == "":
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s' ORDER BY BreezecardNum ASC"
         _cursor.execute(query % num)
         res = _cursor.fetchall()
         return res
+    elif num == "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value == "":
+        query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % username)
+        res = _cursor.fetchall()
+        return res
+    elif num != "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value == "":
+        query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s' AND BreezecardNum = '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (username, num))
+        res = _cursor.fetchall()
+        return res
 
-# returns
-#   the bc of one user
-def db_user_bc_info(username):
-    query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s' ORDER BY BreezecardNum ASC"
-    _cursor.execute(query % username)
-    res = _cursor.fetchall()
-    return res
+    elif num == "" \
+            and username == "" \
+            and min_value != "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE '%s' <= Value AND Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (min_value, max_value))
+        res = _cursor.fetchall()
+        return res
+    elif num != "" \
+            and username == "" \
+            and min_value != "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s' AND '%s' <= Value AND Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (num, min_value, max_value))
+        res = _cursor.fetchall()
+        return res
+    elif num == "" \
+            and username != "" \
+            and min_value != "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s' AND '%s' <= Value AND Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (username, min_value, max_value))
+        res = _cursor.fetchall()
+        return res
+    elif num != "" \
+            and username != "" \
+            and min_value != "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s' AND BelongsTo = '%s' AND '%s' <= Value AND Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (num, username, min_value, max_value))
+        res = _cursor.fetchall()
+        return res
+
+    elif num == "" \
+            and username == "" \
+            and min_value != "" \
+            and max_value == "":
+        query = "SELECT * FROM Breezecard WHERE '%s' <= Value ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % min_value)
+        res = _cursor.fetchall()
+        return res
+    elif num != "" \
+            and username == "" \
+            and min_value != "" \
+            and max_value == "":
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s' AND '%s' <= Value ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (num, min_value))
+        res = _cursor.fetchall()
+        return res
+    elif num == "" \
+            and username != "" \
+            and min_value != "" \
+            and max_value == "":
+        query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s' AND '%s' <= Value ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (username, min_value))
+        res = _cursor.fetchall()
+        return res
+    elif num != "" \
+            and username != "" \
+            and min_value != "" \
+            and max_value == "":
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s' AND BelongsTo = '%s' AND '%s' <= Value ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (num, username, min_value))
+        res = _cursor.fetchall()
+        return res
+
+    elif num == "" \
+            and username == "" \
+            and min_value == "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % max_value)
+        res = _cursor.fetchall()
+        return res
+    elif num != "" \
+            and username == "" \
+            and min_value == "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s' AND Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (num, max_value))
+        res = _cursor.fetchall()
+        return res
+    elif num == "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s' AND Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (username, max_value))
+        res = _cursor.fetchall()
+        return res
+    elif num != "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value != "":
+        query = "SELECT * FROM Breezecard WHERE BreezecardNum = '%s' AND BelongsTo = '%s' AND Value <= '%s' ORDER BY BreezecardNum ASC"
+        _cursor.execute(query % (num, username, max_value))
+        res = _cursor.fetchall()
+        return res
 
 # returns
 #   the bcNum of one user
 def db_user_bc_num(username):
-    out = [list(item)[0] for item in db_user_bc_info(username)]
+    out = [list(item)[0] for item in db_bc_info('', username, '', '')]
     return out
 
 # returns
@@ -132,7 +245,7 @@ def db_user_bc_num(username):
 # False: if user is not in trip
 #     (False, None)
 def db_user_inTrip(username):
-    out = [list(item)[0] for item in db_user_bc_info(username)]
+    out = [list(item)[0] for item in db_bc_info('', username, '', '')]
     for num in out:
         info = db_trip_retrieve(num)
         for trip in info:
@@ -408,15 +521,15 @@ def station_delete(stopID):
 # returns
 #     a tuple of one station's info
 #     a tuple of tuples of stations' info
-# format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
+# format: ('N4', 'Midtown', Decimal('5.00'), 0, 1, None)
 def db_station_retrieve(stopID=None):
     if stopID is None:
-        query = "SELECT * FROM Station ORDER BY StopID"
+        query = "SELECT S.*, B.Intersection FROM Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID ORDER BY StopID"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
     else:
-        query = "SELECT * FROM Station WHERE StopID = '%s'"
+        query = "SELECT S.*, B.Intersection FROM (Station S LEFT JOIN BusStationIntersection B ON S.StopID = B.StopID) WHERE S.StopID = '%s'"
         _cursor.execute(query % stopID)
         res = _cursor.fetchone()
         _cursor.fetchall()
@@ -582,12 +695,12 @@ def conflict_delete(username, bcNum):
 # format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
 def db_conflict_retrieve(num=None):
     if num is None:
-        query = "SELECT * FROM Conflict ORDER BY BreezecardNum"
+        query = "SELECT C.BreezecardNum, C.Username, C.DateAndTime, B.BelongsTo FROM Conflict C LEFT JOIN Breezecard B On C.BreezecardNum = B.BreezecardNum ORDER BY BreezecardNum"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
     else:
-        query = "SELECT * FROM Conflict WHERE BreezecardNum = '%s' ORDER BY BreezecardNum"
+        query = "SELECT C.BreezecardNum, C.Username, C.DateAndTime, B.BelongsTo FROM Conflict C LEFT JOIN Breezecard B On C.BreezecardNum = B.BreezecardNum WHERE C.BreezecardNum = '%s' ORDER BY BreezecardNum"
         _cursor.execute(query % num)
         res = _cursor.fetchall()
         return res
@@ -681,5 +794,5 @@ def db_trip_retrieve(bcNum=None):
 
 # Executions:
 set_connection()
-print(intersection_retrieve('BUSN4'))
+print(db_user_inTrip('kellis'))
 close_connection()
