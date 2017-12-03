@@ -117,7 +117,7 @@ def remove_breezecard(num):
     set_connection()
 
     # execute the query
-    status = db_bc_delete(num)
+    status = db_bc_update_holder(num)
 
     # close connection
     close_connection()
@@ -578,7 +578,7 @@ def take_trip(bcNum, startID):
     # execute the query
     start_station = db_station_retrieve(startID)
 
-    if start_station[-2] == 1:
+    if start_station[-3] == 1:
         # station has been closed
         return 97
 
@@ -594,6 +594,9 @@ def take_trip(bcNum, startID):
         return 99
 
     time = str(datetime.now())[:-7]
+
+    # set up connection
+    set_connection()
     status = trip_insert(fare, time, bcNum, startID)
 
     # close connection
@@ -626,4 +629,4 @@ def end_trip(username, endId):
 
     return status
 
-print(trip_history('sandrapatel', '2017-10-27 00:00:00', '2017-10-29 00:00:00'))
+print(take_trip('7534785562588930', 'N4'))
