@@ -22,7 +22,7 @@
                 <button type="submit" class="btn btn-default btn-xs" aria-label="Left Align" name="station_management" value="stop_id_up">
                   <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
                 </button>
-                <button type="submit" class="btn btn-default btn-xs" aria-label="Left Align" name="station_management" value="stio_id_down">
+                <button type="submit" class="btn btn-default btn-xs" aria-label="Left Align" name="station_management" value="stop_id_down">
                   <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
                 </button>
               </td>
@@ -55,7 +55,11 @@
                 </td>
                 <td>{{ o[0] }}</td>
                 <td>{{ o[2] }}</td>
-                <td>{{ o[3] }}</td>
+                {% if o[3] == 0 %}
+                <td>Open</td>
+                {%else%}
+                <td>Close</td>
+                {%endif%}
 
           </tr>
         {% endfor %}

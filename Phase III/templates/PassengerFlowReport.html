@@ -6,10 +6,11 @@
     <title>Passenger Flow Report</title>
 </head>
 <body>
+<form class="form-group" action="update_passenger_flow" method="post">
 <div class="container">
       <h2>Passenger Flow Report</h2>
 
-      <form class="form-group" action="update_passenger_flow" method="post">
+
           <label for="start_time">Start Time</label>
           <input type="text" name="start_time" class="form-control" id="start_time">
           <label for="end_time">End Time</label>
@@ -17,7 +18,7 @@
           <hr style="clear:both;">
           <button id="btnSignIn" class="btn btn-primary" type="submit" name="update_passenger_flow" value="update_filter">Update Filter</button>
           <a class=" btn btn-default" href="to_passenger_flow_report" role="button">Reset</a>
-      </form>
+
 
 
       <table class="table table-hover">
@@ -49,6 +50,7 @@
     <a class=" btn btn-default" href="to_admin" role="button">Go Back</a>
     </div>
     <p id = "feedback"  style="color: red">{{error}}</p>
+    </form>
 
 </body>
 </html>

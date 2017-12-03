@@ -146,17 +146,43 @@ def station_management():
     print "station_management start"
     if request.method == "POST":
         button_chosen = request.form['station_management']
+        station_list = get_station_list()
+        station_back_list = list(station_list)
         if button_chosen == "station_name_up":
-            station_list = get_station_list()
-            station_back_list = list(station_list)
             station_back_list = sorted(station_back_list, key = lambda x:x[1])
+            station_list = tuple(station_back_list)
+            return render_template('StationListing.html', station_list = station_list, error="")
+        elif button_chosen == "stop_id_up":
+            station_back_list = sorted(station_back_list, key = lambda x:x[0])
+            station_list = tuple(station_back_list)
+            return render_template('StationListing.html', station_list = station_list, error="")
+        elif button_chosen == "stop_id_down":
+            station_back_list = sorted(station_back_list, key = lambda x: x[0], reverse=True)
+            station_list = tuple(station_back_list)
+            return render_template('StationListing.html', station_list = station_list, error="")
+        elif button_chosen == "fare_up":
+            station_back_list = sorted(station_back_list, key = lambda x: x[2])
+            station_list = tuple(station_back_list)
+            return render_template('StationListing.html', station_list = station_list, error="")
+        elif button_chosen == "fare_down":
+            station_back_list = sorted(station_back_list, key = lambda x: x[2], reverse=True)
+            station_list = tuple(station_back_list)
+            return render_template('StationListing.html', station_list = station_list, error="")
+        elif button_chosen == "status_up":
+            station_back_list = sorted(station_back_list, key = lambda x: x[3])
+            station_list = tuple(station_back_list)
+            return render_template('StationListing.html', station_list = station_list, error="")
+        elif button_chosen == "status_down":
+            station_back_list = sorted(station_back_list, key = lambda x: x[3], reverse = True)
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         station_id_selected = request.form['row_select']
         print station_id_selected
         station_info_tuple = get_station_info(station_id_selected)
         print station_info_tuple
-        return render_template('StationDetail.html', station_info_tuple = station_info_tuple)
+        intersection_name = station_info_tuple[-1]
+        not_have_intersection = (intersection_name is None)
+        return render_template('StationDetail.html', station_info_tuple = station_info_tuple, not_have_intersection = not_have_intersection, intersection_name = intersection_name)
 
 @app.route("/to_create_new_station")
 def to_create_new_station():
@@ -170,23 +196,57 @@ def create_new_station():
         station_id = request.form['station_id']
         station_fare = request.form['station_fare']
         BusOrTrain = request.form['BusOrTrain']
-        if BusOrTrain == 'Bus':
-            train_status = 0
-        else:
-            train_status = 1
         station_status = request.form['station_status']
         if station_status == 'Open':
             close_status = 0
         else:
             close_status = 1
-        # TODO: create new station into database
-        result = insert_station(str(station_id), str(station_name), float(station_fare), int(close_status), int(train_status))
-        print str(station_name) + str(station_id) + str(station_fare) + str(close_status) + str(train_status)
+        result = -1
+        if BusOrTrain == 'Bus':
+            train_status = 0
+            bus_intersection = request.form['bus_intersection']
+            result = insert_station(station_id, station_name, float(station_fare), int(close_status), int(train_status), bus_intersection)
+        else:
+            train_status = 1
+            result = insert_station(station_id, station_name, float(station_fare), int(close_status), int(train_status))
+        # print str(station_name) + str(station_id) + str(station_fare) + str(close_status) + str(train_status)
         if result == 0:
             station_list = get_station_list()
-            return render_template('StationListing.html', station_list = station_list)
+            return render_template('StationListing.html', station_list = station_list, error = "")
         else:
             return render_template('CreateNewStation.html', error = "something goes wrong")
+
+
+@app.route("/update_station_detail", methods=["POST"])
+def update_station_detail():
+    print "update_station_detail start"
+    if request.method == "POST":
+        button_chosen = request.form['update_station_detail']
+        if button_chosen == 'update_fare':
+            new_fare = request.form['fare']
+            stop_id = request.form['station_id']
+            result = station_update_fare(stop_id, float(new_fare))
+            error = ""
+            if result == 0:
+                error = "successfully updated fare"
+            else:
+                error = "cannot update fare"
+            station_list = get_station_list()
+            return render_template('StationListing.html', station_list = station_list, error = error)
+        else:
+            new_status = request.form['status_selected']
+            stop_id = request.form['station_id']
+            result = station_update_closedstatus(stop_id, int(new_status))
+            error = ""
+            if result == 0:
+                error = "successfully updated status"
+            else:
+                error = "cannot update status"
+            station_list = get_station_list()
+            return render_template('StationListing.html', station_list = station_list, error = error)
+
+
+
 
 @app.route("/to_admin")
 def to_admin():
@@ -213,7 +273,7 @@ def filter_bc():
         max_value = request.form['max_value']
         print owner
         print card_number
-        bc_list = get_bc_list(card_number, owner, float(min_value), float(max_value))
+        bc_list = get_bc_list(card_number, owner, min_value, max_value)
         print bc_list
         return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
 
@@ -248,9 +308,16 @@ def update_passenger_flow():
     print "update_passenger_flow start"
     error = "successfully changed"
     if request.method == "POST":
-        start_time = request.form['start_time']
-        end_time = request.form['end_time']
-        passenger_list = passenger_flow(start_time, end_time)
+        button_chosen = request.form['update_passenger_flow']
+        if button_chosen == 'station_name_up':
+            passenger_list = passenger_flow()
+            passenger_back_list = list(passenger_list)
+            passenger_back_list = sorted(passenger_back_list, key = lambda x:x[0])
+            passenger_list = tuple(passenger_back_list)
+        else:
+            start_time = request.form['start_time']
+            end_time = request.form['end_time']
+            passenger_list = passenger_flow(start_time, end_time)
         return render_template('PassengerFlowReport.html', passenger_list = passenger_list, error = "")
 
 
@@ -321,7 +388,9 @@ def manage_card_function():
             if result != 0:
                 error = "cannot remove card"
         elif button_chosen == "add_card":
+            print "come to add card"
             card_selected_num = request.form['add_card']
+            print card_selected_num
             result = add_breezecard(card_selected_num, logged_user)
             if result != 0:
                 error = "cannot add card to user"
@@ -335,6 +404,16 @@ def manage_card_function():
             if result != 0:
                 error = "cannot add money to this card"
         card_list = get_bc_list("", logged_user, "", "")
+        card_back_list = list(card_list)
+        if button_chosen == "card_number_up":
+            card_back_list = sorted(card_back_list, key = lambda x:x[0])
+        elif button_chosen == "card_number_down":
+            card_back_list = sorted(card_back_list, key = lambda x:x[0], reverse = True)
+        elif button_chosen == "value_up":
+            card_back_list = sorted(card_back_list, key = lambda x:x[1])
+        elif button_chosen == "value_down":
+            card_back_list = sorted(card_back_list, key = lambda x:x[1], reverse = True)
+        card_list = tuple(card_back_list)
         return render_template('manageCard.html', card_list = card_list, error=error)
 
 @app.route("/to_home")
@@ -375,39 +454,59 @@ def update_view_history():
     print "update_view_history start"
     error = "successfully changed"
     if request.method == "POST":
-        start_time = request.form['start_time']
-        end_time = request.form['end_time']
-        trip_list = trip_history(logged_user)
-        return render_template('TripHistory.html', trip_list = trip_list, error=error)
+        button_chosen = request.form['update_view_history']
+        if button_chosen == 'update_filter':
+            start_time = request.form['start_time']
+            end_time = request.form['end_time']
+            trip_list = trip_history(logged_user)
+            return render_template('TripHistory.html', trip_list = trip_list, error=error)
+        else:
+            trip_list = trip_history(logged_user)
+            trip_back_list = list(trip_list)
+            trip_back_list = sorted(trip_back_list, key = lambda x: x[0], reverse=True)
+            trip_list = tuple(trip_back_list)
+            return render_template('TripHistory.html', trip_list = trip_list, error="")
 
 @app.route("/suspended_reassign", methods=["POST"])
 def suspended_reassign():
     print "suspended_reassign start"
     error = ""
     if request.method == "POST":
-        suspended_card_num =request.form['card_selected']
         button_chosen = request.form['suspended_reassign']
-        suspend_card_list = conflict_list()
-        suspended_card_selected = ()
-        for i in suspend_card_list:
-            if i[0] == suspended_card_num:
-                suspended_card_selected = i
-
-        if button_chosen == "set_new_owner":
-            new_owner = suspended_card_selected[1]
+        if button_chosen == "set_new_owner" or button_chosen == "set_old_owner":
+            suspended_card_num =request.form['card_selected']
+            suspend_card_list = conflict_list()
+            suspended_card_selected = ()
+            for i in suspend_card_list:
+                if i[0] == suspended_card_num:
+                    suspended_card_selected = i
+            if button_chosen == "set_new_owner":
+                new_owner = suspended_card_selected[1]
+            else:
+                new_owner = suspended_card_selected[3]
+            print "new_owner is ",
+            print new_owner
+            result = bc_change_user(suspended_card_num, new_owner)
+            if result != 0:
+                error = "did not change successfully"
+            else:
+                result2 = bc_remove_from_conflict(suspended_card_selected[1], suspended_card_selected[0])
+                if result2 != 0:
+                    error = "did not remove from conflict_list successfully"
+            suspend_card_list = conflict_list()
+            return render_template('suspended.html', card_list = suspend_card_list, error = error)
         else:
-            new_owner = suspended_card_selected[3]
-        print "new_owner is ",
-        print new_owner
-        result = bc_change_user(suspended_card_num, new_owner)
-        if result != 0:
-            error = "did not change successfully"
-        else:
-            result2 = bc_remove_from_conflict(suspended_card_selected[1], suspended_card_selected[0])
-            if result2 != 0:
-                error = "did not remove from conflict_list successfully"
-        suspend_card_list = conflict_list()
-        return render_template('suspended.html', card_list = suspend_card_list, error = error)
+            print "choose left or right"
+            suspend_card_list = conflict_list()
+            suspend_back_list = list(suspend_card_list)
+            if button_chosen == "date_suspended_down":
+                suspend_back_list = sorted(suspend_back_list, key = lambda x:x[2], reverse = True)
+            elif button_chosen == "date_suspended_up":
+                suspend_back_list = sorted(suspend_back_list, key = lambda x:x[2])
+            else:
+                suspend_back_list = sorted(suspend_back_list, key = lambda x:x[0])
+            suspend_card_list = tuple(suspend_back_list)
+            return render_template('suspended.html', card_list = suspend_card_list, error = "")
 
 
 if __name__ == '__main__':
