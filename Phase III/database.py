@@ -395,31 +395,6 @@ def db_bc_update_value(num, value):
         print("---> " + str(e) + '\n')  # print exception message
         return 1
 
-# update breezecard value given breezecard num
-# @param: String: num (length 16 fixed)
-# @param: int: value
-# returns:
-#   0 - successfully updated
-#   1 - any exception
-def db_bc_deduct_value(num, value):
-    query = "UPDATE Breezecard SET Value = '%f' WHERE BreezecardNum = '%s'"
-    try:
-        print("log :: executing Breezecard update query\n")
-        current_card = db_bc_info(num, "", "", "")
-        current_card = current_card[0]
-        print "current card is ",
-        print current_card
-        current_value = float(current_card[1])
-        _cursor.execute(query % (current_value - float(value), num))
-        _database.commit()
-        print("++ Successfully update " + num + "'s value ++\n")
-        return 0
-
-    except Exception as e:
-        print("---> run into Exception:")
-        print("---> " + str(e) + '\n')  # print exception message
-        return 1
-
 # update breezecard holder given breezecard num
 # @param: String: num (length 16 fixed)
 # @param: String: BelongsTo
@@ -784,17 +759,50 @@ def db_trip_update(time, bcNum, endsID):
 # returns
 #   a tuple of one trip's info
 #   a tuple of tuples of station's info
-def db_trip_retrieve(bcNum=None):
+def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
     if bcNum is None:
-        query = "SELECT * FROM Trip ORDER BY StartTime"
-        _cursor.execute(query)
-        res = _cursor.fetchall()
-        return res
+        if startTime is None and endTime is None:
+            query = "SELECT * FROM Trip ORDER BY StartTime"
+            _cursor.execute(query)
+            res = _cursor.fetchall()
+            return res
+        elif endTime is None:
+            query = "SELECT * FROM Trip WHERE StartTime < '%s' ORDER BY StartTime"
+            _cursor.execute(query % endTime)
+            res = _cursor.fetchall()
+            return res
+        elif startTime is None:
+            query = "SELECT * FROM Trip WHERE StartTime > '%s' ORDER BY StartTime"
+            _cursor.execute(query % startTime)
+            res = _cursor.fetchall()
+            return res
+        else:
+            query = "SELECT * FROM Trip WHERE StartTime > '%s' AND StartTime < '%s' ORDER BY StartTime"
+            _cursor.execute(query % (startTime, endTime))
+            res = _cursor.fetchall()
+            return res
+
     else:
-        query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' ORDER BY StartTime"
-        _cursor.execute(query % bcNum)
-        res = _cursor.fetchall()
-        return res
+        if startTime is None and endTime is None:
+            query =  "SELECT * FROM Trip WHERE BreezecardNum = '%s' ORDER BY StartTime"
+            _cursor.execute(query % bcNum)
+            res = _cursor.fetchall()
+            return res
+        elif endTime is None:
+            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime < '%s' ORDER BY StartTime"
+            _cursor.execute(query % (bcNum, endTime))
+            res = _cursor.fetchall()
+            return res
+        elif startTime is None:
+            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime > '%s' ORDER BY StartTime"
+            _cursor.execute(query % (bcNum, startTime))
+            res = _cursor.fetchall()
+            return res
+        else:
+            query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' AND StartTime > '%s' AND StartTime < '%s' ORDER BY StartTime"
+            _cursor.execute(query % (bcNum, startTime, endTime))
+            res = _cursor.fetchall()
+            return res
 
 # Executions:
 set_connection()

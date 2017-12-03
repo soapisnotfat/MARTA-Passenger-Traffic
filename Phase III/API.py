@@ -511,6 +511,7 @@ format:
 
 '''
 def trip_history(username, startTime=None, endTime=None):
+    # TODO: test
     # set up connection
     set_connection()
 
@@ -524,7 +525,7 @@ def trip_history(username, startTime=None, endTime=None):
     BCs = db_user_bc_num(username)
     trips = []
     for bc in BCs:
-        for trip in db_trip_retrieve(bc):
+        for trip in db_trip_retrieve(bc, startTime, endTime):
             trips.append(trip)
 
     # close connection
@@ -532,10 +533,10 @@ def trip_history(username, startTime=None, endTime=None):
     out_list = []
     for t in trips:
         if t[4]:
-            out_list.append(tuple([str(t[1]), respetive_name[t[3]], respetive_name[t[4]], float(t[0]), t[2]]))
+            out_list.append(tuple([str(t[1]), respective_name[t[3]], respective_name[t[4]], float(t[0]), t[2]]))
 
         else:
-            out_list.append(tuple([str(t[1]), respetive_name[t[3]], "None", float(t[0]), t[2]]))
+            out_list.append(tuple([str(t[1]), respective_name[t[3]], "None", float(t[0]), t[2]]))
     out = tuple(out_list)
     return out
 
@@ -585,7 +586,7 @@ def take_trip(bcNum, startID):
         return 98
 
     fare = float(start_station[2])
-    deduction_status = db_bc_deduct_value(bcNum, fare)
+    deduction_status = bc_add_value(bcNum, -fare)
     if deduction_status != 0:
         # not enough balance to take this trip
         return 99
