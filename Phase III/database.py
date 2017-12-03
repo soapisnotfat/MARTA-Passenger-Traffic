@@ -523,6 +523,7 @@ def intersection_retrieve(stopID=None):
         query = "SELECT * FROM BusStationIntersection WHERE StopID = '%s'"
         _cursor.execute(query % stopID)
         res = _cursor.fetchone()
+        res = res[1]
         _cursor.fetchall()
         return res
 
@@ -680,5 +681,5 @@ def db_trip_retrieve(bcNum=None):
 
 # Executions:
 set_connection()
-print(intersection_retrieve(''))
+print(intersection_retrieve('BUSN4'))
 close_connection()
