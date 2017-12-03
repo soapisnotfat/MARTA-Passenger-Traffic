@@ -85,7 +85,7 @@ def add_breezecard(num, username):
     if bc_exist == 0:
         out = 0
     else:
-        bc_info = db_bc_info(num)
+        bc_info = db_bc_info(num, "", "", "")
         if bc_info[2] is not None:
             # conflict caught
             print("conflict caught")
@@ -98,6 +98,7 @@ def add_breezecard(num, username):
                 out = 2
             else:
                 out = 3
+        print db_bc_info("", username, "", "")
 
     # close connection
     close_connection()
@@ -171,7 +172,7 @@ def bc_add_value(num, value):
     set_connection()
 
     # execute the query
-    current_card = db_bc_info(num)
+    current_card = db_bc_info(num, "", "", "")
     if current_card is None:
         return 1
     print current_card
@@ -196,7 +197,7 @@ def bc_info(num):
     set_connection()
 
     # execute the query
-    out = db_bc_info(num)
+    out = db_bc_info(num, "", "", "")
 
     # close connection
     close_connection()

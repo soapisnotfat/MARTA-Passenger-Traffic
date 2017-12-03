@@ -273,7 +273,7 @@ def filter_bc():
         max_value = request.form['max_value']
         print owner
         print card_number
-        bc_list = get_bc_list(card_number, owner, float(min_value), float(max_value))
+        bc_list = get_bc_list(card_number, owner, min_value, max_value)
         print bc_list
         return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
 
@@ -388,7 +388,9 @@ def manage_card_function():
             if result != 0:
                 error = "cannot remove card"
         elif button_chosen == "add_card":
+            print "come to add card"
             card_selected_num = request.form['add_card']
+            print card_selected_num
             result = add_breezecard(card_selected_num, logged_user)
             if result != 0:
                 error = "cannot add card to user"

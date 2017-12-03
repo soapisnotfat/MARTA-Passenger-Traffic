@@ -104,11 +104,11 @@ def db_bc_info(num, username, min_value, max_value):
             and username == "" \
             and min_value == "" \
             and max_value == "":
-        if num is None:
-            query = "SELECT * FROM Breezecard ORDER BY BreezecardNum ASC"
-            _cursor.execute(query)
-            res = _cursor.fetchall()
-            return res
+        # if num is None:
+        query = "SELECT * FROM Breezecard ORDER BY BreezecardNum ASC"
+        _cursor.execute(query)
+        res = _cursor.fetchall()
+        return res
     elif num != "" \
             and username == "" \
             and min_value == "" \
@@ -405,8 +405,12 @@ def db_bc_deduct_value(num, value):
     query = "UPDATE Breezecard SET Value = '%f' WHERE BreezecardNum = '%s'"
     try:
         print("log :: executing Breezecard update query\n")
-        current_value = db_bc_info(num)[1]
-        _cursor.execute(query % (value, current_value - num))
+        current_card = db_bc_info(num, "", "", "")
+        current_card = current_card[0]
+        print "current card is ",
+        print current_card
+        current_value = float(current_card[1])
+        _cursor.execute(query % (current_value - float(value), num))
         _database.commit()
         print("++ Successfully update " + num + "'s value ++\n")
         return 0

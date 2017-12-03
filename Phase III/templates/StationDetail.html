@@ -11,19 +11,19 @@
         {{station_info_tuple[1]}}<br>
         Stop ID: {{station_info_tuple[0]}}<br>
     </h1>
-    <p>
+
         <label for="fare">Fare</label>
         <select name="station_id">
         <option value = {{station_info_tuple[0]}} selected> {{station_info_tuple[0]}}</option>
         </select>
         <input type="text" name="fare" class="form-control" id="fare" value = {{station_info_tuple[2]}}>
         <button class="btn btn-primary" id="update_fare" name = "update_station_detail" value = "update_fare" type="submit">Update Fare</button>
+    <p>
         {% if not_have_intersection %}
         Nearest Intersection: Not available<br>
         {%else%}
         Nearest Intersection: {{intersection_name}}<br>
         {%endif%}
-        <br>
         {% if station_info_tuple[3] == 0 %}
         Status: <br>
             <select name="status_selected">
@@ -38,8 +38,6 @@
             </select>
         {%endif%}
         <button class="btn btn-primary" id="update_status" name = "update_station_detail" value = "update_status" type="submit">Update Status</button>
-
-
     </p>
     <a class=" btn btn-default" href="/to_station_management" role="button">Go Back</a>
   </form>
