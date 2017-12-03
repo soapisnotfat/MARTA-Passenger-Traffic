@@ -105,6 +105,23 @@ def add_breezecard(num, username):
     return out
 
 '''
+user delete breezecard
+:returns
+    0 - the card has been deleted
+    other - any other violations
+'''
+def remove_breezecard(num):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    status = db_bc_delete(num)
+
+    # close connection
+    close_connection()
+    return status
+
+'''
 assign a new user to a breezecard
 
 :returns
@@ -287,6 +304,42 @@ def get_bc_list(num=None, username=None, min_value=None, max_value=None):
     return tuple(out)
 
 '''
+return an unsuspended breezecard list
+
+for User exclusively
+'''
+def bc_unsuspended_list(username):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    temp = db_user_bc_info(username)
+    out = [item for item in temp if db_bc_is_suspended(item[0]) == 0]
+
+    # close connection
+    close_connection()
+
+    return out
+
+'''
+remove current conflict from database
+:returns
+    0 - the conflict has been deleted
+    other - any other violations
+'''
+def bc_remove_from_conflict(username, bcNum):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    status = conflict_delete(username, bcNum)
+
+    # close connection
+    close_connection()
+
+    return status
+
+'''
 generate a usable breezecard number
 
 :return
@@ -372,16 +425,54 @@ def station_update_fare(stopID, fare):
     return update_status
 
 '''
+update the closedStatus of station fare
+
+:returns
+    0 - successfully updated
+    1 - any violation
+'''
+def station_update_closedstatus(stopID, status):
+    # set up connection
+    set_connection()
+
+    # execute the query
+    update_status = db_station_update_closedstatus(stopID, status)
+
+    # close connection
+    close_connection()
+
+    return update_status
+
+'''
 insert a new station
 
 returns
-    0 - successfully updated
+    0 - successfully inserted
     1 - duplication key violation, StopID
     2 - any violation
 '''
-def insert_station(stopid, name, enterFare, ClosedStatus, isTrain):
-    num = station_insert(stopid, name, enterFare, ClosedStatus, isTrain)
-    return num
+def insert_station(stopid, name, enterFare, ClosedStatus, isTrain, intersection=None):
+    # set up connection
+    set_connection()
+
+    if isTrain == 1:
+        status = station_insert(stopid, name, enterFare, ClosedStatus, isTrain)
+        # close connection
+        close_connection()
+        return status
+    else:
+        status = station_insert(stopid, name, enterFare, ClosedStatus, isTrain)
+        if status != 0:
+            # close connection
+            close_connection()
+            return status
+        else:
+            intersection_insertion = busStationIntersection_insert(stopid, intersection)
+            if intersection_insertion != 0:
+                station_delete(stopid)
+                # close connection
+                close_connection()
+            return intersection_insertion
 
 '''
 return the passenger flow in a specific time span
@@ -535,6 +626,9 @@ starting a trip
 
 :returns
     0 - successfully started a trip
+    97 - station has been closed
+    98 - current card is suspended
+    99 - fare deduction failed
     other - any violation
 '''
 def take_trip(bcNum, startID):
@@ -544,7 +638,21 @@ def take_trip(bcNum, startID):
     # execute the query
     start_station = db_station_retrieve(startID)
 
+    if start_station[-2] == 1:
+        # station has been closed
+        return 97
+
+    suspension_status = db_bc_is_suspended(bcNum)
+    if suspension_status != 0:
+        # current card is suspended
+        return 98
+
     fare = float(start_station[2])
+    deduction_status = db_bc_deduct_value(bcNum, fare)
+    if deduction_status != 0:
+        # not enough balance to take this trip
+        return 99
+
     time = str(datetime.now())[:-7]
     status = trip_insert(fare, time, bcNum, startID)
 
@@ -577,3 +685,5 @@ def end_trip(username, endId):
     close_connection()
 
     return status
+
+print(bc_unsuspended_list('sandrapatel'))

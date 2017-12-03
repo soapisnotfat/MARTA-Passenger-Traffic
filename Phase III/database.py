@@ -282,6 +282,27 @@ def db_bc_update_value(num, value):
         print("---> " + str(e) + '\n')  # print exception message
         return 1
 
+# update breezecard value given breezecard num
+# @param: String: num (length 16 fixed)
+# @param: int: value
+# returns:
+#   0 - successfully updated
+#   1 - any exception
+def db_bc_deduct_value(num, value):
+    query = "UPDATE Breezecard SET Value = '%f' WHERE BreezecardNum = '%s'"
+    try:
+        print("log :: executing Breezecard update query\n")
+        current_value = db_bc_info(num)[1]
+        _cursor.execute(query % (value, current_value - num))
+        _database.commit()
+        print("++ Successfully update " + num + "'s value ++\n")
+        return 0
+
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
+
 # update breezecard holder given breezecard num
 # @param: String: num (length 16 fixed)
 # @param: String: BelongsTo
@@ -295,6 +316,37 @@ def db_bc_update_holder(num, username):
         _cursor.execute(query % (username, num))
         _database.commit()
         print("++ Successfully update " + num + "'s holder ++\n")
+        return 0
+
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
+
+# check is given bc is suspended
+# @param: String: num (length 16 fixed)
+# returns:
+#   0 - not suspended
+#   1 - suspended
+def db_bc_is_suspended(num):
+    status = db_conflict_retrieve(num)
+    if len(status) == 0 or status is None:
+        return 0
+    else:
+        return 1
+
+# delete tuples from breezecard
+# @param: String: breezecardNum
+# returns:
+#   0 - successfully deleted
+#   1 - deletion failed
+def db_bc_delete(num):
+    query = "DELETE FROM Breezecard WHERE BreezecardNum = '%s';"
+    try:
+        print("log :: executing breezecard deletion query\n")
+        _cursor.execute(query % num)
+        _database.commit()
+        print("++ Successfully delete " + num + " from database ++\n")
         return 0
 
     except Exception as e:
@@ -332,6 +384,25 @@ def station_insert(stopid, name, enterFare, ClosedStatus, isTrain):
             # other violations
             return 2
 
+# delete tuples from station
+# @param: String: stopID
+# returns:
+#   0 - successfully deleted
+#   1 - deletion failed
+def station_delete(stopID):
+    query = "DELETE FROM Station WHERE StopID = '%s';"
+    try:
+        print("log :: executing statoion deletion query\n")
+        _cursor.execute(query % stopID)
+        _database.commit()
+        print("++ Successfully delete " + stopID + " from database ++\n")
+        return 0
+
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
+
 # retrieve station info
 #
 # returns
@@ -361,6 +432,25 @@ def db_station_update_fare(stopID, fare):
     try:
         print("log :: executing Station update query\n")
         _cursor.execute(query % (fare, stopID))
+        _database.commit()
+        print("++ Successfully update " + stopID + "'s fare ++\n")
+        return 0
+
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
+
+# update the closeStatus of a station
+#
+# returns
+#   0 - successfully updated
+#   1 - any violation
+def db_station_update_closedstatus(stopID, ClosedStatus):
+    query = "UPDATE Station SET ClosedStatus = '%d' WHERE StopID = '%s'"
+    try:
+        print("log :: executing Station update query\n")
+        _cursor.execute(query % (ClosedStatus, stopID))
         _database.commit()
         print("++ Successfully update " + stopID + "'s fare ++\n")
         return 0
@@ -443,6 +533,26 @@ def conflict_insert(username, BreezeCardNum, DateAndTime):
         else:
             # other violations
             return 2
+
+# delete tuples from conflict
+# @param: String: username
+# @param: String: BreezeCardNum
+# returns:
+#   0 - successfully deleted
+#   1 - deletion failed
+def conflict_delete(username, bcNum):
+    query = "DELETE FROM Conflict WHERE Username = '%s' and BreezecardNum = '%s'"
+    try:
+        print("log :: executing conflict deletion query\n")
+        _cursor.execute(query % (username, bcNum))
+        _database.commit()
+        print("++ Successfully delete " + bcNum + " from database ++\n")
+        return 0
+
+    except Exception as e:
+        print("---> run into Exception:")
+        print("---> " + str(e) + '\n')  # print exception message
+        return 1
 
 # retrieve Conflict info
 #
@@ -550,6 +660,6 @@ def db_trip_retrieve(bcNum=None):
         return res
 
 # Executions:
-# set_connection()
-# trip_insert(1, '2017-10-31 21:30:00', '1325138309325420', 'FP')
-# close_connection()
+set_connection()
+print(conflict_delete('sandrapatel', '4769432303280540'))
+close_connection()
