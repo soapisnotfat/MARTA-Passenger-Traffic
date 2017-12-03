@@ -8,7 +8,7 @@
 <body style="padding: 3% 5% 5% 5%; width: 80%">
     <h1>Breeze Card Management</h1>
     <br>
-    <form class="form-group" action="filter_bc" method="post">
+    <form class="form-group" action="filter_bc_and_isset" method="post">
         <label for="owner">Owner:</label>
         <input type="text" name="owner" class="form-control" id="owner" maxlength="32">
         <label for="card_number">Card Number:</label>
@@ -23,39 +23,48 @@
         </div>
         <hr style="clear:both;">
     <a class=" btn btn-default" href="to_breeze_card" role="button">Reset</a>
-    <button id="btnSignIn" class="btn btn-primary" type="submit">Update Filter</button>
-    </form>
+    <button id="btnSignIn" name = 'filter_bc_and_isset' class="btn btn-primary" value = "update_filter" type="submit">Update Filter</button>
+    {%if show_suspended%}
+      <select name="suspended_status">
+        <option value = "1" selected>Show Suspended Card</option>
+        <option value = "0">Do Not Show Suspended Card</option>
+      </select>
+    {%else%}
+      <select name="suspended_status">
+        <option value = "1" >Show Suspended Card</option>
+        <option value = "0" selected>Do Not Show Suspended Card</option>
+      </select>
+    {%endif%}
 
 
-    <form class="form-group" action="breezecard_action" method="post">
-        <table class="table table-hover">
-            <thead>
-              <tr>
-                  <td>Card#</td>
-                  <td>Value</td>
-                  <td>Owner</td>
-              </tr>
-            </thead>
-            <tbody>
-            {% for card_o in card_list %}
+    <table class="table table-hover">
+        <thead>
+          <tr>
+              <td>Card#</td>
+              <td>Value</td>
+              <td>Owner</td>
+          </tr>
+        </thead>
+        <tbody>
+        {% for card_o in card_list %}
 
-              <tr>
-                    <td>
-                      <input type="radio" name="row_select" value = {{card_o[0]}}> {{ card_o[0] }}
-                    </td>
-                    <td>{{ card_o[1] }}</td>
-                    <td>{{ card_o[2] }}</td>
+          <tr>
+                <td>
+                  <input type="radio" name="row_select" value = {{card_o[0]}}> {{ card_o[0] }}
+                </td>
+                <td>{{ card_o[1] }}</td>
+                <td>{{ card_o[2] }}</td>
 
-              </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     <input type="text" name="set_value" class="form-control" id="set_value" maxlength="32">
-    <button class="btn btn-primary" name = "isset" value = "set_value" id="set_value" type="submit">Set Value of Selected Card</button>
+    <button class="btn btn-primary" name = 'filter_bc_and_isset'value = "set_value" id="set_value" type="submit">Set Value of Selected Card</button>
 
     <input type="text" name="transfer_name" class="form-control" id="transfer_name">
-    <button class="btn btn-primary" name = "isset" value = "transfer_name" id="transfer_name" type="submit">Transfer Selected Card</button>
+    <button class="btn btn-primary" name = 'filter_bc_and_isset' value = "transfer_name" id="transfer_name" type="submit">Transfer Selected Card</button>
     <hr>
     <a class=" btn btn-default" href="to_admin" role="button">Back to Admin</a>
     <p id = "feedback"  style="color: red">{{error}}</p>

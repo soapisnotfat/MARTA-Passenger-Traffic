@@ -273,43 +273,88 @@ def to_suspend_card():
 @app.route("/to_breeze_card")
 def to_breeze_card():
     bc_list = get_bc_list("", "", "", "")
+    bc_back_list = []
+    unsuspended_list = bc_unsuspended_list()
+    for e in bc_list:
+        if e not in unsuspended_list:
+            new_e = list(e)
+            new_e[-1] = "Suspended"
+            e = tuple(new_e)
+        bc_back_list.append(e)
+    bc_list = tuple(bc_back_list)
     # bc_list = (('0475861680208144', Decimal('35.25'), 'commuter14'), )
-    return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
+    return render_template('BreezeCardManage.html', card_list = bc_list, error = "", show_suspended = True)
 
-@app.route("/filter_bc", methods=["POST"])
-def filter_bc():
-    print "filter_bc start"
+@app.route("/filter_bc_and_isset", methods=["POST"])
+def filter_bc_and_isset():
     if request.method == "POST":
-        owner = request.form['owner']
-        card_number = request.form['card_number']
-        min_value = request.form['min_value']
-        max_value = request.form['max_value']
-        print owner
-        print card_number
-        bc_list = get_bc_list(card_number, owner, min_value, max_value)
-        print bc_list
-        return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
+        button_chosen = request.form['filter_bc_and_isset']
+        if button_chosen == "update_filter":
+            owner = request.form['owner']
+            card_number = request.form['card_number']
+            min_value = request.form['min_value']
+            max_value = request.form['max_value']
+            whether_suspended = request.form['suspended_status']
+            print owner
+            print card_number
+            bc_list = get_bc_list(card_number, owner, min_value, max_value)
+            bc_back_list = []
+            unsuspended_list = bc_unsuspended_list()
+            # not show suspended_list
+            if whether_suspended == '0':
+                show_suspended_status = False
+                print "show unsuspended_list"
+                for e in bc_list:
+                    if e in unsuspended_list:
+                        bc_back_list.append(e)
+            else:
+                show_suspended_status = True
+                for e in bc_list:
+                    if e not in unsuspended_list:
+                        new_e = list(e)
+                        new_e[-1] = "Suspended"
+                        e = tuple(new_e)
+                    bc_back_list.append(e)
+            bc_list = tuple(bc_back_list)
+            return render_template('BreezeCardManage.html', card_list = bc_list, error = "", show_suspended = show_suspended_status)
 
-@app.route("/breezecard_action", methods=["POST"])
-def breezecard_action():
-    print "breezecard_action start"
-    error = "successfully changed"
-    if request.method == "POST":
-        stationId = request.form['row_select']
-        if (request.form['isset'] == "transfer_name"):
-            username = request.form['transfer_name']
-            result = bc_change_user(stationId, username)
-            if result == 1:
-                error = "Whoops, something goes wrong"
-        elif (request.form['isset'] == 'set_value'):
-            set_value = request.form['set_value']
-            result = bc_change_value(stationId, float(set_value))
-            if result == 1:
-                error = "Whoops, something goes wrong"
-        else:
-            error = "some error about clicking"
-    bc_list = get_bc_list("", "", "", "")
-    return render_template('BreezeCardManage.html', card_list = bc_list, error = error)
+        elif button_chosen == "set_value" or button_chosen == "transfer_name":
+            print "come to second situation"
+            stationId = request.form['row_select']
+            if (button_chosen == "transfer_name"):
+                print "come to transfer"
+                username = request.form['transfer_name']
+                result = bc_change_user(stationId, username)
+                if result == 1:
+                    error = "Whoops, something goes wrong"
+            elif (button_chosen == 'set_value'):
+                print "come to set value"
+                set_value = request.form['set_value']
+                result = bc_change_value(stationId, float(set_value))
+                if result == 1:
+                    error = "Whoops, something goes wrong"
+            else:
+                error = "some error about clicking"
+            bc_list = get_bc_list("", "", "", "")
+            bc_back_list = []
+            unsuspended_list = bc_unsuspended_list()
+            whether_suspended = request.form['suspended_status']
+            if whether_suspended == '0':
+                show_suspended_status = False
+                print "show unsuspended_list"
+                for e in bc_list:
+                    if e in unsuspended_list:
+                        bc_back_list.append(e)
+            else:
+                show_suspended_status = True
+                for e in bc_list:
+                    if e not in unsuspended_list:
+                        new_e = list(e)
+                        new_e[-1] = "Suspended"
+                        e = tuple(new_e)
+                    bc_back_list.append(e)
+            bc_list = tuple(bc_back_list)
+            return render_template('BreezeCardManage.html', card_list = bc_list, error = "", show_suspended = show_suspended_status)
 
 @app.route("/to_passenger_flow_report")
 def to_passenger_flow_report():
@@ -429,7 +474,7 @@ def manage_card_function():
             add_money = float(request.form['money_value'])
             result = bc_add_value(card_selected_num, add_money)
             if result == 1000:
-                error = "cannot add too much time"
+                error = "Invalid add money amount"
             elif result != 0:
                 error = "cannot add money to this card"
         card_list = get_bc_list("", logged_user, "", "")

@@ -235,7 +235,7 @@ return an unsuspended breezecard list
 
 for User exclusively
 '''
-def bc_unsuspended_list(username):
+def bc_unsuspended_list(username = ""):
     # set up connection
     set_connection()
 
