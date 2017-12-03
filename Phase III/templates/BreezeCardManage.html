@@ -12,7 +12,7 @@
         <label for="owner">Owner:</label>
         <input type="text" name="owner" class="form-control" id="owner" maxlength="32">
         <label for="card_number">Card Number:</label>
-        <input type="text" name="card_number" class="form-control" id="card_number" maxlength="32">
+        <input type="text" pattern="\d*" / name="card_number" class="form-control" id="card_number" maxlength="16" minlength="16">
         <div data-role = "fieldcontain" class = "ui-hide-label" style="float:left">
           <label for="min_value">Min Value:</label>
           <input type="text" name="min_value" class="form-control" id="min_value" maxlength="32">
@@ -54,7 +54,7 @@
     <input type="text" name="set_value" class="form-control" id="set_value" maxlength="32">
     <button class="btn btn-primary" name = "isset" value = "set_value" id="set_value" type="submit">Set Value of Selected Card</button>
 
-    <input type="text" name="transfer_name" class="form-control" id="transfer_name" maxlength="32">
+    <input type="text" name="transfer_name" class="form-control" id="transfer_name">
     <button class="btn btn-primary" name = "isset" value = "transfer_name" id="transfer_name" type="submit">Transfer Selected Card</button>
     <hr>
     <a class=" btn btn-default" href="to_admin" role="button">Back to Admin</a>

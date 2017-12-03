@@ -42,13 +42,13 @@
         </tbody>
     </table>
 
-    <input type="text" name="add_card" class="form-control" id="set_value" maxlength="16" minlength="16">
+    <input type="text" pattern="\d*" / name="add_card" class="form-control" id="set_value" maxlength="16" minlength="16">
     <button class="btn btn-primary" name = "manage_card_function" value = "add_card" id="add_card" type="submit">Add Card</button><br>
    <br>
     <font size="5">Add Value to Selected Card</font>
     <br>
     <label for="credit_card_number" >Credit Card Number:</label>
-        <input type="text" name="credit_card_number" class="form-control" id="credit_card_number" minlength="16" maxlength="16">
+        <input type="text" pattern="\d*" / name="credit_card_number" class="form-control" id="credit_card_number" minlength="16" maxlength="16">
     <label for="money_value">Value: $</label>
         <input type="text" name="money_value" class="form-control" id="money_value" maxlength="32">
     <button class="btn btn-primary" name = "manage_card_function" value = "add_value" id="add_value" type="submit">Add Value</button>
