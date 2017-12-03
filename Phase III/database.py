@@ -101,7 +101,7 @@ def db_bc_exist(num):
 #           ('9876543212345670', Decimal('92.50'), None)
 def db_bc_info(num=None):
     if num is None:
-        query = "SELECT * FROM Breezecard"
+        query = "SELECT * FROM Breezecard ORDER BY BreezecardNum ASC"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
@@ -115,7 +115,7 @@ def db_bc_info(num=None):
 # returns
 #   the bc of one user
 def db_user_bc_info(username):
-    query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s'"
+    query = "SELECT * FROM Breezecard WHERE BelongsTo = '%s' ORDER BY BreezecardNum ASC"
     _cursor.execute(query % username)
     res = _cursor.fetchall()
     return res
@@ -411,7 +411,7 @@ def station_delete(stopID):
 # format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
 def db_station_retrieve(stopID=None):
     if stopID is None:
-        query = "SELECT * FROM Station"
+        query = "SELECT * FROM Station ORDDER BY StopID"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
@@ -562,12 +562,12 @@ def conflict_delete(username, bcNum):
 # format: ('31955', 'Old Milton Pkwy - North Point Pkwy', Decimal('1.00'), 0, 0)
 def db_conflict_retrieve(num=None):
     if num is None:
-        query = "SELECT * FROM Conflict"
+        query = "SELECT * FROM Conflict ORDER BY BreezecardNum"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
     else:
-        query = "SELECT * FROM Conflict WHERE BreezecardNum = '%s'"
+        query = "SELECT * FROM Conflict WHERE BreezecardNum = '%s' ORDER BY BreezecardNum"
         _cursor.execute(query % num)
         res = _cursor.fetchall()
         return res
@@ -649,17 +649,17 @@ def db_trip_update(time, bcNum, endsID):
 #   a tuple of tuples of station's info
 def db_trip_retrieve(bcNum=None):
     if bcNum is None:
-        query = "SELECT * FROM Trip"
+        query = "SELECT * FROM Trip ORDER BY StartTime"
         _cursor.execute(query)
         res = _cursor.fetchall()
         return res
     else:
-        query = "SELECT * FROM Trip WHERE BreezecardNum = '%s'"
+        query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' ORDER BY StartTime"
         _cursor.execute(query % bcNum)
         res = _cursor.fetchall()
         return res
 
 # Executions:
 set_connection()
-print(conflict_delete('sandrapatel', '4769432303280540'))
+print(db_user_bc_info('kellis'))
 close_connection()
