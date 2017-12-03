@@ -370,6 +370,16 @@ def to_view_trip_history():
     trip_list = trip_history(logged_user)
     return render_template('TripHistory.html', trip_list = trip_list, error="")
 
+@app.route("/update_view_history", methods=["POST"])
+def update_view_history():
+    print "update_view_history start"
+    error = "successfully changed"
+    if request.method == "POST":
+        start_time = request.form['start_time']
+        end_time = request.form['end_time']
+        trip_list = trip_history(logged_user)
+        return render_template('TripHistory.html', trip_list = trip_list, error="")
+
 
 if __name__ == '__main__':
     app.run()
