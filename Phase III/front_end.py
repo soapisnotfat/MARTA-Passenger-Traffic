@@ -13,7 +13,6 @@ def main():
     """
     Starts app at login screen
     """
-    # TODO: check whether set up database
     set_connection()
     return render_template('login.html', error = "")
 
@@ -47,15 +46,26 @@ def sign_in():
         elif num == 2:
             global logged_user
             logged_user = _name
-            card_list = bc_unsuspended_list(_name)
-
-            selected_card = card_list[0]
-
-            card_list_list = list(card_list)
-            card_list_list.remove(selected_card)
-            card_list = tuple(card_list_list)
+            bc_list = get_bc_list("", logged_user, "", "")
+            selected_card = bc_list[0]
+            bc_back_list = list(bc_list)
+            bc_back_list.remove(selected_card)
+            bc_list = tuple(bc_back_list)
+            bc_back_list = []
+            unsuspended_list = bc_unsuspended_list()
+            for e in bc_list:
+                if e not in unsuspended_list:
+                    new_e = list(e)
+                    new_e.append("suspended")
+                    e = tuple(new_e)
+                else:
+                    new_e = list(e)
+                    new_e.append("")
+                    e = tuple(new_e)
+                bc_back_list.append(e)
+            bc_list = tuple(bc_back_list)
             wheter_intrip = inTrip(_name)
-            station_list = get_station_list()
+            station_list = get_station_list(0)
             if wheter_intrip[0]:
                 in_trip = True
                 stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
@@ -70,8 +80,7 @@ def sign_in():
             for i in station_list:
                 endList.append((i[1], i[0]),)
             startList = tuple(startList)
-            print selected_card
-            return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
+            return render_template('home.html', startList = startList, card_list = bc_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
         else:
             return render_template("login.html", error="Cannot login, try again")
 
@@ -80,7 +89,6 @@ def to_register():
     """
     Takes user to register page
     """
-    print "to_register start"
     return render_template('register.html', error="")
 
 @app.route("/register", methods=["POST"])
@@ -99,8 +107,6 @@ def register():
             return render_template("register.html", error = "Email does not meet with format.")
         if constraint_username_format(name) == 0:
             return render_template("register.html", error = "Username does not meet with format.")
-        print p1
-        print p2
 
         error = ""
         if p1 != p2:
@@ -113,7 +119,6 @@ def register():
                 if buzzcard == "withoutCard":
                     num = generate_bc()
                 else:
-                    print "choose with card"
                     num = request.form['BreezeCardNum']
                 result2 = add_breezecard(num, name)
                 if (result2 != 0):
@@ -122,7 +127,7 @@ def register():
                 global logged_user
                 logged_user = name
                 wheter_intrip = inTrip(name)
-                station_list = get_station_list()
+                station_list = get_station_list(0)
                 if wheter_intrip[0]:
                     in_trip = True
                     stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
@@ -137,18 +142,32 @@ def register():
                 for i in station_list:
                     endList.append((i[1], i[0]),)
                 startList = tuple(startList)
-                card_list = bc_unsuspended_list(logged_user)
-                selected_card = card_list[0]
-                card_list_list = list(card_list)
-                card_list_list.remove(selected_card)
-                card_list = tuple(card_list_list)
-                return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
+                bc_list = get_bc_list("", logged_user, "", "")
+                selected_card = bc_list[0]
+                bc_back_list = list(bc_list)
+                bc_back_list.remove(selected_card)
+                bc_list = tuple(bc_back_list)
+                bc_back_list = []
+                unsuspended_list = bc_unsuspended_list()
+                for e in bc_list:
+                    if e not in unsuspended_list:
+                        new_e = list(e)
+                        new_e.append("suspended")
+                        e = tuple(new_e)
+                    else:
+                        new_e = list(e)
+                        new_e.append("")
+                        e = tuple(new_e)
+                    bc_back_list.append(e)
+                bc_list = tuple(bc_back_list)
+                return render_template('home.html', startList = startList, card_list = bc_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
             else:
                 error = "Cannot register, try again"
                 return render_template("register.html", error=error)
 
 @app.route("/to_station_management")
 def to_station_management():
+    print "to_station_management starts"
     station_list = get_station_list()
     return render_template('StationListing.html', station_list = station_list, error="")
 
@@ -188,15 +207,14 @@ def station_management():
             station_list = tuple(station_back_list)
             return render_template('StationListing.html', station_list = station_list, error="")
         station_id_selected = request.form['row_select']
-        print station_id_selected
         station_info_tuple = get_station_info(station_id_selected)
-        print station_info_tuple
         intersection_name = station_info_tuple[-1]
         not_have_intersection = (intersection_name is None)
         return render_template('StationDetail.html', station_info_tuple = station_info_tuple, not_have_intersection = not_have_intersection, intersection_name = intersection_name, error = "")
 
 @app.route("/to_create_new_station")
 def to_create_new_station():
+    print "to_create_new_station starts"
     return render_template('CreateNewStation.html', error = "")
 
 @app.route("/create_new_station", methods=["POST"])
@@ -220,7 +238,6 @@ def create_new_station():
         else:
             train_status = 1
             result = insert_station(station_id, station_name, float(station_fare), int(close_status), int(train_status))
-        # print str(station_name) + str(station_id) + str(station_fare) + str(close_status) + str(train_status)
         if result == 0:
             station_list = get_station_list()
             return render_template('StationListing.html', station_list = station_list, error = "")
@@ -261,15 +278,18 @@ def update_station_detail():
 
 @app.route("/to_admin")
 def to_admin():
+    print "to admin starts"
     return render_template('admin.html', error = "")
 
 @app.route("/to_suspend_card")
 def to_suspend_card():
+    print "to suspend_card starts"
     suspend_card_list = conflict_list()
     return render_template('suspended.html', card_list = suspend_card_list, error = "")
 
 @app.route("/to_breeze_card")
 def to_breeze_card():
+    print "to_breeze_card"
     bc_list = get_bc_list("", "", "", "")
     bc_back_list = []
     unsuspended_list = bc_unsuspended_list()
@@ -286,6 +306,7 @@ def to_breeze_card():
 @app.route("/filter_bc_and_isset", methods=["POST"])
 def filter_bc_and_isset():
     if request.method == "POST":
+        print "filter_bc_and_isset"
         button_chosen = request.form['filter_bc_and_isset']
         if button_chosen == "update_filter":
             owner = request.form['owner']
@@ -293,15 +314,12 @@ def filter_bc_and_isset():
             min_value = request.form['min_value']
             max_value = request.form['max_value']
             whether_suspended = request.form['suspended_status']
-            print owner
-            print card_number
             bc_list = get_bc_list(card_number, owner, min_value, max_value)
             bc_back_list = []
             unsuspended_list = bc_unsuspended_list()
             # not show suspended_list
             if whether_suspended == '0':
                 show_suspended_status = False
-                print "show unsuspended_list"
                 for e in bc_list:
                     if e in unsuspended_list:
                         bc_back_list.append(e)
@@ -317,25 +335,26 @@ def filter_bc_and_isset():
             return render_template('BreezeCardManage.html', card_list = bc_list, error = "", show_suspended = show_suspended_status)
 
         elif button_chosen == "set_value" or button_chosen == "transfer_name":
-            print "come to second situation"
             stationId = request.form['row_select']
             if (button_chosen == "transfer_name"):
-                print "come to transfer"
                 username = request.form['transfer_name']
-                original_username = bc_info(stationId)
-                original_username = original_username[0]
-                original_username = original_username[2]
-                whether_in_trip = inTrip(original_username)
-                if whether_in_trip[0] and whether_in_trip[1][2] == stationId:
-                    error = "You cannot transfer a card which is in_trip."
+                if username == "":
+                    error = "Whoops, need to input new_user"
+                elif isAdmin(username) == 1:
+                    error = "cannot transfer to admin"
                 else:
-                    result = bc_change_user(stationId, username)
-                    if result != 0:
-                        error = "Whoops, cannot transfer to this person."
+                    original_username = bc_info(stationId)
+                    original_username = original_username[0]
+                    original_username = original_username[2]
+                    whether_in_trip = inTrip(original_username)
+                    if whether_in_trip[0] and whether_in_trip[1][2] == stationId:
+                        error = "You cannot transfer a card which is in_trip."
+                    else:
+                        result = bc_change_user(stationId, username)
+                        if result != 0:
+                            error = "Whoops, cannot transfer to this person."
             elif (button_chosen == 'set_value'):
-                print "come to set value"
                 set_value = request.form['set_value']
-                # TODO: check whether new value is admin.
                 result = bc_change_value(stationId, float(set_value))
                 if result != 0:
                     error = "Whoops, something goes wrong"
@@ -347,7 +366,6 @@ def filter_bc_and_isset():
             whether_suspended = request.form['suspended_status']
             if whether_suspended == '0':
                 show_suspended_status = False
-                print "show unsuspended_list"
                 for e in bc_list:
                     if e in unsuspended_list:
                         bc_back_list.append(e)
@@ -364,6 +382,7 @@ def filter_bc_and_isset():
 
 @app.route("/to_passenger_flow_report")
 def to_passenger_flow_report():
+    print "to_passenger_flow_report"
     passenger_list = passenger_flow()
     return render_template('PassengerFlowReport.html', passenger_list = passenger_list, error = "")
 
@@ -381,7 +400,6 @@ def update_passenger_flow():
         else:
             start_time = request.form['start_time']
             end_time = request.form['end_time']
-            # TODO: TEST
             if start_time == "" and end_time == "":
                 passenger_list = passenger_flow()
             elif start_time == "":
@@ -402,30 +420,39 @@ def balance_or_start():
         button_chosen = request.form['balance_or_start']
         error = ""
         if button_chosen == 'start_trip':
-            print "get into start_trip"
             start_station = request.form['start_selected']
-            print start_station
             result = take_trip(selected_card_num, start_station)
             error = ""
             if result != 0:
                 error = "cannot take the trip"
         elif button_chosen == "user_end_trip":
             end_station = request.form['end_selected']
-            print end_station
             result = end_trip(logged_user, end_station)
             error = ""
             if result != 0:
                 error = "cannot end the trip"
         selected_card = bc_info(selected_card_num)
         selected_card = selected_card[0]
-        print selected_card
-        card_list = get_bc_list("", logged_user, "", "")
-        card_list_list = list(card_list)
-        card_list_list.remove(selected_card)
-        card_list = tuple(card_list_list)
+        bc_list = get_bc_list("", logged_user, "", "")
+        bc_back_list = list(bc_list)
+        bc_back_list.remove(selected_card)
+        bc_list = tuple(bc_back_list)
+        bc_back_list = []
+        unsuspended_list = bc_unsuspended_list()
+        for e in bc_list:
+            if e not in unsuspended_list:
+                new_e = list(e)
+                new_e.append("suspended")
+                e = tuple(new_e)
+            else:
+                new_e = list(e)
+                new_e.append("")
+                e = tuple(new_e)
+            bc_back_list.append(e)
+        bc_list = tuple(bc_back_list)
+
         wheter_intrip = inTrip(logged_user)
-        # TODO: test open list
-        station_list = get_station_list(1)
+        station_list = get_station_list(0)
         if wheter_intrip[0]:
             in_trip = True
             stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
@@ -440,11 +467,12 @@ def balance_or_start():
         for i in station_list:
             endList.append((i[1], i[0]),)
         startList = tuple(startList)
-        return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = error, selected_card = selected_card)
+        return render_template('home.html', startList = startList, card_list = bc_back_list, in_trip = in_trip, endList = endList, error = error, selected_card = selected_card)
 
 @app.route("/to_maganage_card")
 def to_maganage_card():
-    card_list = get_bc_list("", logged_user, "", "")
+    print "to_maganage_card"
+    card_list = bc_unsuspended_list(logged_user)
     return render_template('manageCard.html', card_list = card_list, error="")
 
 @app.route("/manage_card_function", methods=["POST"])
@@ -464,9 +492,7 @@ def manage_card_function():
                 if result != 0:
                     error = "cannot remove card"
         elif button_chosen == "add_card":
-            print "come to add card"
             card_selected_num = request.form['add_card']
-            print card_selected_num
             result = add_breezecard(card_selected_num, logged_user)
             if result != 0:
                 error = "cannot add card to user"
@@ -481,7 +507,7 @@ def manage_card_function():
                 error = "Invalid add money amount"
             elif result != 0:
                 error = "cannot add money to this card"
-        card_list = get_bc_list("", logged_user, "", "")
+        card_list = bc_unsuspended_list(logged_user)
         card_back_list = list(card_list)
         if button_chosen == "card_number_up":
             card_back_list = sorted(card_back_list, key = lambda x:x[0])
@@ -496,15 +522,30 @@ def manage_card_function():
 
 @app.route("/to_home")
 def to_home():
+    print "to_home function"
     card_list = bc_unsuspended_list(logged_user)
 
     selected_card = card_list[0]
 
-    card_list_list = list(card_list)
-    card_list_list.remove(selected_card)
-    card_list = tuple(card_list_list)
+    bc_list = get_bc_list("", logged_user, "", "")
+    bc_back_list = list(bc_list)
+    bc_back_list.remove(selected_card)
+    bc_list = tuple(bc_back_list)
+    bc_back_list = []
+    unsuspended_list = bc_unsuspended_list()
+    for e in bc_list:
+        if e not in unsuspended_list:
+            new_e = list(e)
+            new_e.append("suspended")
+            e = tuple(new_e)
+        else:
+            new_e = list(e)
+            new_e.append("")
+            e = tuple(new_e)
+        bc_back_list.append(e)
+    bc_list = tuple(bc_back_list)
     wheter_intrip = inTrip(logged_user)
-    station_list = get_station_list(1)
+    station_list = get_station_list(0)
     if wheter_intrip[0]:
         in_trip = True
         stopNAME = (get_station_info(wheter_intrip[1][3]))[1]
@@ -519,11 +560,11 @@ def to_home():
     for i in station_list:
         endList.append((i[1], i[0]),)
     startList = tuple(startList)
-    print selected_card
-    return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
+    return render_template('home.html', startList = startList, card_list = bc_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
 
 @app.route("/to_view_trip_history")
 def to_view_trip_history():
+    print "to_view_trip_history"
     trip_list = trip_history(logged_user)
     return render_template('TripHistory.html', trip_list = trip_list, error="")
 
@@ -532,7 +573,6 @@ def update_view_history():
     print "update_view_history start"
     if request.method == "POST":
         button_chosen = request.form['update_view_history']
-        # TODO: Test
         if button_chosen == 'update_filter':
             start_time = request.form['start_time']
             end_time = request.form['end_time']
@@ -579,7 +619,6 @@ def suspended_reassign():
             suspend_card_list = conflict_list()
             return render_template('suspended.html', card_list = suspend_card_list, error = error)
         else:
-            print "choose left or right"
             suspend_card_list = conflict_list()
             suspend_back_list = list(suspend_card_list)
             if button_chosen == "date_suspended_down":

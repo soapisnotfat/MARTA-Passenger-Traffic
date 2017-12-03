@@ -17,9 +17,9 @@
         <form class="form-group" action="balance_or_start" method="post">
 
         <select name="card_selected">
-        <option value = {{selected_card[0]}} selected>{{selected_card[0]}}</option>
+        <option value = {{selected_card[0]}} selected>{{selected_card[0]}} {{selected_card[3]}}</option>
         {% for card in card_list %}
-          <option value = {{card[0]}}>{{ card[0] }}</option>
+          <option value = {{card[0]}}>{{ card[0] }} {{card[3]}}</option>
         {% endfor %}
         </select>
         <button class="btn btn-primary" name = "balance_or_start" value = "select_breeze_card" id="select_breeze_card" type="submit">Select Card</button>
