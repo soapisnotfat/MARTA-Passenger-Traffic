@@ -335,6 +335,7 @@ def filter_bc_and_isset():
             return render_template('BreezeCardManage.html', card_list = bc_list, error = "", show_suspended = show_suspended_status)
 
         elif button_chosen == "set_value" or button_chosen == "transfer_name":
+            error = ""
             stationId = request.form['row_select']
             if (button_chosen == "transfer_name"):
                 username = request.form['transfer_name']
