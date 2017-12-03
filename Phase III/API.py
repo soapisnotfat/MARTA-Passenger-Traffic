@@ -86,6 +86,7 @@ def add_breezecard(num, username):
         out = 0
     else:
         bc_info = db_bc_info(num, "", "", "")
+        bc_info = bc_info[0]
         if bc_info[2] is not None:
             # conflict caught
             print("conflict caught")
@@ -526,7 +527,7 @@ def trip_history(username, startTime=None, endTime=None):
     BCs = db_user_bc_num(username)
     trips = []
     for bc in BCs:
-        for trip in db_trip_retrieve(bc, startTime, endTime):
+        for trip in db_trip_retrieve(bc):
             trips.append(trip)
 
     # close connection

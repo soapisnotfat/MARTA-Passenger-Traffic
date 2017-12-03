@@ -23,7 +23,11 @@
         {% endfor %}
         </select>
         <button class="btn btn-primary" name = "balance_or_start" value = "select_breeze_card" id="select_breeze_card" type="submit">Select Card</button>
+        {% if in_trip %}
+        <a class=" btn btn-default" href="to_maganage_card" role="button" disabled>Manage Cards</a>
+        {%else%}
         <a class=" btn btn-default" href="to_maganage_card" role="button">Manage Cards</a>
+        {%endif%}
         <p>Balance: ${{selected_card[1]}}</p>
 
         <hr>

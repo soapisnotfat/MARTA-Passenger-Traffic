@@ -115,7 +115,6 @@ def register():
                     return render_template("register.html", error=error)
                 global logged_user
                 logged_user = name
-                card_list = bc_unsuspended_list(name)
                 wheter_intrip = inTrip(name)
                 station_list = get_station_list()
                 if wheter_intrip[0]:
@@ -132,7 +131,12 @@ def register():
                 for i in station_list:
                     endList.append((i[1], i[0]),)
                 startList = tuple(startList)
-                return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "")
+                card_list = bc_unsuspended_list(logged_user)
+                selected_card = card_list[0]
+                card_list_list = list(card_list)
+                card_list_list.remove(selected_card)
+                card_list = tuple(card_list_list)
+                return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
             else:
                 error = "Cannot register, try again"
                 return render_template("register.html", error=error)
@@ -381,7 +385,7 @@ def balance_or_start():
         for i in station_list:
             endList.append((i[1], i[0]),)
         startList = tuple(startList)
-        return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = "", selected_card = selected_card)
+        return render_template('home.html', startList = startList, card_list = card_list, in_trip = in_trip, endList = endList, error = error, selected_card = selected_card)
 
 @app.route("/to_maganage_card")
 def to_maganage_card():
@@ -396,7 +400,7 @@ def manage_card_function():
         button_chosen = request.form['manage_card_function']
         if button_chosen == "remove":
             card_selected_num = request.form['card_selected']
-            result = bc_change_user(card_selected_num, None)
+            result = remove_breezecard(card_selected_num)
             if result != 0:
                 error = "cannot remove card"
         elif button_chosen == "add_card":

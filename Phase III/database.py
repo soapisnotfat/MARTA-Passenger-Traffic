@@ -796,6 +796,8 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
 
     else:
         if startTime is None and endTime is None:
+            print "goint to start and end both None",
+            print bcNum
             query = "SELECT * FROM Trip WHERE BreezecardNum = '%s' ORDER BY StartTime"
             _cursor.execute(query % bcNum)
             res = _cursor.fetchall()
