@@ -206,95 +206,95 @@ def bc_info(num):
 '''
 get a list of breezecard
 '''
-def get_bc_list(num=None, username=None, min_value=None, max_value=None):
+def get_bc_list(num, username, min_value, max_value):
     # set up connection
     set_connection()
 
     # execute the query
-    if num is None \
-            and username is None \
-            and min_value is None \
-            and max_value is None:
+    if num == "" \
+            and username == "" \
+            and min_value == "" \
+            and max_value == "":
         out = db_bc_info()
-    elif num is not None \
-            and username is None \
-            and min_value is None \
-            and max_value is None:
+    elif num != ""\
+            and username == "" \
+            and min_value == "" \
+            and max_value == "":
         out = db_bc_info(num)
-    elif num is None \
-            and username is not None \
-            and min_value is None \
-            and max_value is None:
+    elif num == "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value == "":
         out = db_user_bc_info(username)
-    elif num is not None \
-            and username is not None \
-            and min_value is None \
-            and max_value is None:
+    elif num != "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value == "":
         out = [item for item in db_user_bc_info(username) if num == item[0]]
 
-    elif num is None \
-            and username is None \
-            and min_value is not None \
-            and max_value is not None:
+    elif num == "" \
+            and username == "" \
+            and min_value != "" \
+            and max_value != "":
         out = [item for item in db_bc_info() if min_value <= float(item[1]) <= max_value]
-    elif num is not None \
-            and username is None \
-            and min_value is not None \
-            and max_value is not None:
+    elif num != "" \
+            and username == "" \
+            and min_value != "" \
+            and max_value != "":
         out = [item for item in db_bc_info(num) if min_value <= float(item[1]) <= max_value]
-    elif num is None \
-            and username is not None \
-            and min_value is not None \
-            and max_value is not None:
+    elif num == ""  \
+            and username != "" \
+            and min_value != "" \
+            and max_value != "":
         out = [item for item in db_user_bc_info(username) if min_value <= float(item[1]) <= max_value]
-    elif num is not None \
-            and username is not None \
-            and min_value is not None \
-            and max_value is not None:
+    elif num != "" \
+            and username != "" \
+            and min_value != "" \
+            and max_value != "":
         temp = [item for item in db_user_bc_info(username) if num == item[0]]
         out = [item for item in temp if min_value <= float(item[1]) <= max_value]
 
-    elif num is None \
-            and username is None \
-            and min_value is not None \
-            and max_value is None:
+    elif num == "" \
+            and username == "" \
+            and min_value != ""\
+            and max_value == "":
         out = [item for item in db_bc_info() if min_value <= float(item[1])]
-    elif num is not None \
-            and username is None \
-            and min_value is not None \
-            and max_value is None:
+    elif num != "" \
+            and username == "" \
+            and min_value != "" \
+            and max_value == "":
         out = [item for item in db_bc_info(num) if min_value <= float(item[1])]
-    elif num is None \
-            and username is not None \
-            and min_value is not None \
-            and max_value is None:
+    elif num == "" \
+            and username != "" \
+            and min_value != "" \
+            and max_value == "":
         out = [item for item in db_user_bc_info(username) if min_value <= float(item[1])]
-    elif num is not None \
-            and username is not None \
-            and min_value is not None \
-            and max_value is None:
+    elif num != "" \
+            and username != "" \
+            and min_value != "" \
+            and max_value == "":
         temp = [item for item in db_user_bc_info(username) if num == item[0]]
         out = [item for item in temp if min_value <= float(item[1])]
 
-    elif num is None \
-            and username is None \
-            and min_value is None \
-            and max_value is not None:
+    elif num == "" \
+            and username == "" \
+            and min_value == "" \
+            and max_value != "":
         out = [item for item in db_bc_info() if float(item[1]) <= max_value]
-    elif num is not None \
-            and username is None \
-            and min_value is None \
-            and max_value is not None:
+    elif num != "" \
+            and username == "" \
+            and min_value == "" \
+            and max_value != "":
         out = [item for item in db_bc_info(num) if float(item[1]) <= max_value]
-    elif num is None \
-            and username is not None \
-            and min_value is None \
-            and max_value is not None:
+    elif num == "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value != "":
         out = [item for item in db_user_bc_info(username) if float(item[1]) <= max_value]
-    elif num is not None \
-            and username is not None \
-            and min_value is None \
-            and max_value is not None:
+    elif num != "" \
+            and username != "" \
+            and min_value == "" \
+            and max_value != "":
         temp = [item for item in db_user_bc_info(username) if num == item[0]]
         out = [item for item in temp if float(item[1]) <= max_value]
 
@@ -685,5 +685,3 @@ def end_trip(username, endId):
     close_connection()
 
     return status
-
-print(bc_unsuspended_list('sandrapatel'))

@@ -8,7 +8,8 @@
 <body style="padding: 3% 5% 5% 5%; width: 80%">
     <h1>{{station_info_tuple[1]}}</h1>
     <p>
-        Fare: {{station_info_tuple[2]}}<br>
+        <label for="fare">Fare</label>
+        <input type="text" name="fare" class="form-control" id="fare" value = {{station_info_tuple[2]}}>
         <a class=" btn btn-default btn-xs">Update Fare</a><br>
         Nearest Intersection: {{station_info_tuple[]}}<br>
         Status: {{station_info_tuple[3]}}<br>

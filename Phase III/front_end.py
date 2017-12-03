@@ -47,7 +47,7 @@ def sign_in():
         elif num == 2:
             global logged_user
             logged_user = _name
-            card_list = get_bc_list(None, _name, None, None)
+            card_list = bc_unsuspended_list(_name)
 
             selected_card = card_list[0]
 
@@ -80,7 +80,7 @@ def to_register():
     """
     Takes user to register page
     """
-    print "toregister start"
+    print "to_register start"
     return render_template('register.html', error="")
 
 @app.route("/register", methods=["POST"])
@@ -113,7 +113,7 @@ def register():
             if result == 1:
                 global logged_user
                 logged_user = name
-                card_list = get_bc_list(None, name, None, None)
+                card_list = bc_unsuspended_list(name)
                 wheter_intrip = inTrip(name)
                 station_list = get_station_list()
                 if wheter_intrip[0]:
@@ -145,7 +145,13 @@ def to_station_management():
 def station_management():
     print "station_management start"
     if request.method == "POST":
-
+        button_chosen = request.form['station_management']
+        if button_chosen == "station_name_up":
+            station_list = get_station_list()
+            station_back_list = list(station_list)
+            station_back_list = sorted(station_back_list, key = lambda x:x[1])
+            station_list = tuple(station_back_list)
+            return render_template('StationListing.html', station_list = station_list, error="")
         station_id_selected = request.form['row_select']
         print station_id_selected
         station_info_tuple = get_station_info(station_id_selected)
@@ -193,7 +199,7 @@ def to_suspend_card():
 
 @app.route("/to_breeze_card")
 def to_breeze_card():
-    bc_list = get_bc_list()
+    bc_list = get_bc_list("", "", "", "")
     # bc_list = (('0475861680208144', Decimal('35.25'), 'commuter14'), )
     return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
 
@@ -207,14 +213,7 @@ def filter_bc():
         max_value = request.form['max_value']
         print owner
         print card_number
-        if owner != "":
-            print "come to owner"
-            bc_list = get_bc_list(None, owner, None, None)
-        elif card_number != "":
-            print "come to number"
-            bc_list = get_bc_list(card_number, None, None)
-        else:
-            bc_list = get_bc_list()
+        bc_list = get_bc_list(card_number, owner, float(min_value), float(max_value))
         print bc_list
         return render_template('BreezeCardManage.html', card_list = bc_list, error = "")
 
@@ -236,7 +235,7 @@ def breezecard_action():
                 error = "Whoops, something goes wrong"
         else:
             error = "some error about clicking"
-    bc_list = get_bc_list()
+    bc_list = get_bc_list("", "", "", "")
     return render_template('BreezeCardManage.html', card_list = bc_list, error = error)
 
 @app.route("/to_passenger_flow_report")
@@ -283,7 +282,7 @@ def balance_or_start():
         selected_card = bc_info(selected_card_num)
         selected_card = selected_card[0]
         print selected_card
-        card_list = get_bc_list(None, logged_user, None, None)
+        card_list = get_bc_list("", logged_user, "", "")
         card_list_list = list(card_list)
         card_list_list.remove(selected_card)
         card_list = tuple(card_list_list)
@@ -307,7 +306,7 @@ def balance_or_start():
 
 @app.route("/to_maganage_card")
 def to_maganage_card():
-    card_list = get_bc_list(None, logged_user, None, None)
+    card_list = get_bc_list("", logged_user, "", "")
     return render_template('manageCard.html', card_list = card_list, error="")
 
 @app.route("/manage_card_function", methods=["POST"])
@@ -335,12 +334,12 @@ def manage_card_function():
             result = bc_add_value(card_selected_num, add_money)
             if result != 0:
                 error = "cannot add money to this card"
-        card_list = get_bc_list(None, logged_user, None, None)
+        card_list = get_bc_list("", logged_user, "", "")
         return render_template('manageCard.html', card_list = card_list, error=error)
 
 @app.route("/to_home")
 def to_home():
-    card_list = get_bc_list(None, logged_user, None, None)
+    card_list = bc_unsuspended_list(logged_user)
 
     selected_card = card_list[0]
 
@@ -403,6 +402,10 @@ def suspended_reassign():
         result = bc_change_user(suspended_card_num, new_owner)
         if result != 0:
             error = "did not change successfully"
+        else:
+            result2 = bc_remove_from_conflict(suspended_card_selected[1], suspended_card_selected[0])
+            if result2 != 0:
+                error = "did not remove from conflict_list successfully"
         suspend_card_list = conflict_list()
         return render_template('suspended.html', card_list = suspend_card_list, error = error)
 
