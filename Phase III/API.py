@@ -145,9 +145,14 @@ change a breezecard's value
 
 :returns
     0 - successfully changed value
+    1000 - new value not satisfying constraint
     1 - any violation
 '''
 def bc_change_value(num, value):
+    # check constraints
+    if not 0 <= value <= 1000.00:
+        # new value not satisfying constraint
+        return 1000
     # set up connection
     set_connection()
 
@@ -164,9 +169,11 @@ add a certain value to a breezecard
 
 :returns
     0 - successfully added value
+    1000 - new value not satisfying constraint
     1 - any violation
 '''
 def bc_add_value(num, value):
+
     # set up connection
     set_connection()
 
@@ -178,6 +185,10 @@ def bc_add_value(num, value):
     card = current_card[0]
     card_value = card[1]
     current_value = float(card_value)
+    # check constraints
+    if not 0 <= current_value + value <= 1000.00:
+        # new value not satisfying constraint
+        return 1000
     update_status = db_bc_update_value(num, current_value + value)
 
     # close connection
@@ -273,8 +284,9 @@ def generate_bc():
 
         return res
     else:
+        # close connection
         close_connection()
-        generate_bc()
+        return generate_bc()
 
 '''
 return a list of all station's info
@@ -325,9 +337,14 @@ update the fare of station fare
 
 :returns
     0 - successfully updated
+    1000 - new fare not satisfying constraint
     1 - any violation
 '''
 def station_update_fare(stopID, fare):
+    # check constraints
+    if not 0 <= fare <= 50.00:
+        # new fare not satisfying constraint
+        return 1000
     # set up connection
     set_connection()
 
@@ -364,9 +381,14 @@ insert a new station
 returns
     0 - successfully inserted
     1 - duplication key violation, StopID
+    1000 - new fare not satisfying constraint
     2 - any violation
 '''
 def insert_station(stopid, name, enterFare, ClosedStatus, isTrain, intersection=None):
+    # check constraints
+    if not 0 <= enterFare <= 50.00:
+        # new fare not satisfying constraint
+        return 1000
     # set up connection
     set_connection()
 
@@ -487,16 +509,16 @@ format:
 ['2017-10-28 22:11:13', 'N4', 'N11', 1.5, '9248324548250130']
 
 '''
-def trip_history(username):
+def trip_history(username, startTime=None, endTime=None):
     # set up connection
     set_connection()
 
     stations = db_station_retrieve()
     station_id = [item[0] for item in stations]
     station_name = [item[1] for item in stations]
-    respetive_name = {}
+    respective_name = {}
     for index in range(0, len(station_id)):
-        respetive_name[station_id[index]] = station_name[index]
+        respective_name[station_id[index]] = station_name[index]
 
     BCs = db_user_bc_num(username)
     trips = []
@@ -599,5 +621,3 @@ def end_trip(username, endId):
     close_connection()
 
     return status
-
-print(conflict_list())
