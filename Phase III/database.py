@@ -401,19 +401,33 @@ def db_bc_update_value(num, value):
 # returns:
 #   0 - successfully updated
 #   1 - any exception
-def db_bc_update_holder(num, username):
-    query = "UPDATE Breezecard SET BelongsTo = '%s' WHERE BreezecardNum = '%s'"
-    try:
-        print("log :: executing Breezecard update query\n")
-        _cursor.execute(query % (username, num))
-        _database.commit()
-        print("++ Successfully update " + num + "'s holder ++\n")
-        return 0
+def db_bc_update_holder(num, username=None):
+    if username is None:
+        query = "UPDATE Breezecard SET BelongsTo = NULL WHERE BreezecardNum = '%s'"
+        try:
+            print("log :: executing Breezecard update query\n")
+            _cursor.execute(query % num)
+            _database.commit()
+            print("++ Successfully update " + num + "'s holder ++\n")
+            return 0
 
-    except Exception as e:
-        print("---> run into Exception:")
-        print("---> " + str(e) + '\n')  # print exception message
-        return 1
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            return 1
+    else:
+        query = "UPDATE Breezecard SET BelongsTo = '%s' WHERE BreezecardNum = '%s'"
+        try:
+            print("log :: executing Breezecard update query\n")
+            _cursor.execute(query % (username, num))
+            _database.commit()
+            print("++ Successfully update " + num + "'s holder ++\n")
+            return 0
+
+        except Exception as e:
+            print("---> run into Exception:")
+            print("---> " + str(e) + '\n')  # print exception message
+            return 1
 
 # check is given bc is suspended
 # @param: String: num (length 16 fixed)
@@ -819,6 +833,6 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
             return res
 
 # Executions:
-# set_connection()
-# print(db_trip_retrieve(None, '2017-10-27 00:00:00', '2017-10-29 00:00:00'))
-# close_connection()
+set_connection()
+print(db_bc_delete('1'))
+close_connection()

@@ -4,9 +4,9 @@ import re
 Globals:
 '''
 email_format = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
-username_format = "(^[a-zA-Z0-9_.-]{,50}$)"
+username_format = "(^[a-zA-Z0-9_.-]{8,50}$)"
 username_format_test = "(^[a-zA-Z0-9_.-]{,5}$)"
-password_format = "(^[a-zA-Z0-9_.-]{,50}$)"
+password_format = "(^[a-zA-Z0-9_.-]{8,50}$)"
 password_format_test = "(^[a-zA-Z0-9_.-]{4}$)"
 
 # check email format

@@ -70,11 +70,38 @@ CREATE TABLE BusStationIntersection(
 ) ENGINE=InnoDB;
 
 
+--
+-- Dumping data for table `User`
+--
+INSERT INTO `User` (`Username`, `Password`, `IsAdmin`) VALUES
+('adinozzo', 'c67e443eaa780debf5ee2d71a2a7dc39', 0),
+('admin', '0192023a7bbd73250516f069df18b500', 1),
+('ashton.woods', '27465020c9ea11fc41fac2af1daeba5f', 0),
+('busrider73', '0e63f5aa002eca0b0e293ee6b733c50a', 0),
+('commuter14', '439c7fd92969510d873330e327c0f64d', 0),
+('eoneil', '6b11eaa6bbd19c856b59688fae281d56', 1),
+('ignacio.john', '6f5de409600e6ac40b8e7698bbd004f6', 0),
+('kellis', '370133f7117dc65e277d6dbb858450c1', 0),
+('kparker', '09e5af83d93166c76b351d52a8fe69b5', 1),
+('riyoy1996', '7039e7594e4f4fd6789e9810150e64b9', 0),
+('sandrapatel', '63c9e8af485ed2e845d29c2874e584ea', 0);
+
+--
+-- Dumping data for table `Passenger`
+--
+INSERT INTO `Passenger` (`Username`, `Email`) VALUES
+('adinozzo', 'anthony.dinozzo@ncis.mil.gov'),
+('ashton.woods', 'awoods30@gatech.edu'),
+('ignacio.john', 'john@iconsulting.com'),
+('kellis', 'kateellis@gatech.edu'),
+('busrider73', 'lena.wexler@dayrep.com'),
+('commuter14', 'LeonBarnes@superrito.com'),
+('sandrapatel', 'sandra74@jourrapide.com'),
+('riyoy1996', 'yamada.riyo@navy.mil.gov');
 
 --
 -- Dumping data for table `Breezecard`
 --
-
 INSERT INTO `Breezecard` (`BreezecardNum`, `Value`, `BelongsTo`) VALUES
 ('0123456780987654', 140.25, NULL),
 ('0475861680208144', 35.25, 'commuter14'),
@@ -110,46 +137,8 @@ INSERT INTO `Breezecard` (`BreezecardNum`, `Value`, `BelongsTo`) VALUES
 ('9876543212345670', 92.50, NULL);
 
 --
--- Dumping data for table `BusStationIntersection`
---
-
-INSERT INTO `BusStationIntersection` (`StopID`, `Intersection`) VALUES
-('31955', 'North Point Pkwy'),
-('35161', 'Park Bridge Pkwy'),
-('46612', 'Commerce Pkwy'),
-('95834', 'Haynes Bridge Pkwy'),
-('BUSDOME', NULL),
-('BUSN11', 'Peachtree-Dunwoody Road'),
-('BUSN4', '10th Street'),
-('BUSS2', NULL);
-
---
--- Dumping data for table `Conflict`
---
-
-INSERT INTO `Conflict` (`Username`, `BreezecardNum`, `DateAndTime`) VALUES
-('kellis', '4769432303280540', '2017-10-23 16:21:49'),
-('riyoy1996', '4769432303280540', '0000-00-00 00:00:00'),
-('sandrapatel', '0475861680208144', '2018-11-12 00:00:01');
-
---
--- Dumping data for table `Passenger`
---
-
-INSERT INTO `Passenger` (`Username`, `Email`) VALUES
-('adinozzo', 'anthony.dinozzo@ncis.mil.gov'),
-('ashton.woods', 'awoods30@gatech.edu'),
-('ignacio.john', 'john@iconsulting.com'),
-('kellis', 'kateellis@gatech.edu'),
-('busrider73', 'lena.wexler@dayrep.com'),
-('commuter14', 'LeonBarnes@superrito.com'),
-('sandrapatel', 'sandra74@jourrapide.com'),
-('riyoy1996', 'yamada.riyo@navy.mil.gov');
-
---
 -- Dumping data for table `Station`
 --
-
 INSERT INTO `Station` (`StopID`, `Name`, `EnterFare`, `ClosedStatus`, `IsTrain`) VALUES
 ('31955', 'Old Milton Pkwy - North Point Pkwy', 2.00, 0, 0),
 ('35161', 'Old Milton Pkwy - Park Bridge Pkwy', 2.00, 1, 0),
@@ -195,9 +184,29 @@ INSERT INTO `Station` (`StopID`, `Name`, `EnterFare`, `ClosedStatus`, `IsTrain`)
 ('W5', 'Hamilton E. Holmes', 2.50, 1, 1);
 
 --
+-- Dumping data for table `BusStationIntersection`
+--
+INSERT INTO `BusStationIntersection` (`StopID`, `Intersection`) VALUES
+('31955', 'North Point Pkwy'),
+('35161', 'Park Bridge Pkwy'),
+('46612', 'Commerce Pkwy'),
+('95834', 'Haynes Bridge Pkwy'),
+('BUSDOME', NULL),
+('BUSN11', 'Peachtree-Dunwoody Road'),
+('BUSN4', '10th Street'),
+('BUSS2', NULL);
+
+--
+-- Dumping data for table `Conflict`
+--
+INSERT INTO `Conflict` (`Username`, `BreezecardNum`, `DateAndTime`) VALUES
+('kellis', '4769432303280540', '2017-10-23 16:21:49'),
+('riyoy1996', '4769432303280540', '0000-00-00 00:00:00'),
+('sandrapatel', '0475861680208144', '2018-11-12 00:00:01');
+
+--
 -- Dumping data for table `Trip`
 --
-
 INSERT INTO `Trip` (`Tripfare`, `StartTime`, `BreezecardNum`, `StartsAt`, `EndsAt`) VALUES
 (1.50, '2017-10-10 00:00:00', '7534785562588930', 'BUSS2', 'BUSDOME'),
 (9.00, '2017-10-27 04:31:30', '7301442590825470', 'N4', 'N7'),
@@ -211,21 +220,3 @@ INSERT INTO `Trip` (`Tripfare`, `StartTime`, `BreezecardNum`, `StartsAt`, `EndsA
 (4.00, '2017-11-02 13:11:11', '2792083965359460', '31955', '46612'),
 (1.50, '2017-11-03 09:44:11', '0524807425551662', 'N4', 'N11'),
 (2.75, '2017-11-05 16:21:49', '0524807425551662', 'N11', 'N4');
-
---
--- Dumping data for table `User`
---
-
-INSERT INTO `User` (`Username`, `Password`, `IsAdmin`) VALUES
-('adinozzo', 'c67e443eaa780debf5ee2d71a2a7dc39', 0),
-('admin', '0192023a7bbd73250516f069df18b500', 1),
-('ashton.woods', '27465020c9ea11fc41fac2af1daeba5f', 0),
-('busrider73', '0e63f5aa002eca0b0e293ee6b733c50a', 0),
-('commuter14', '439c7fd92969510d873330e327c0f64d', 0),
-('eoneil', '6b11eaa6bbd19c856b59688fae281d56', 1),
-('ignacio.john', '6f5de409600e6ac40b8e7698bbd004f6', 0),
-('kellis', '370133f7117dc65e277d6dbb858450c1', 0),
-('kparker', '09e5af83d93166c76b351d52a8fe69b5', 1),
-('riyoy1996', '7039e7594e4f4fd6789e9810150e64b9', 0),
-('sandrapatel', '63c9e8af485ed2e845d29c2874e584ea', 0);
-\
