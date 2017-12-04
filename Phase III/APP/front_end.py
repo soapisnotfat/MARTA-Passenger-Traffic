@@ -51,6 +51,7 @@ def sign_in():
             bc_back_list = list(bc_list)
             bc_back_list.remove(selected_card)
             bc_list = tuple(bc_back_list)
+            unsuspended_list = bc_unsuspended_list()
             if selected_card not in unsuspended_list:
                 new_selected_card = list(selected_card)
                 new_selected_card.append("suspended")
@@ -60,7 +61,6 @@ def sign_in():
                 new_selected_card.append("")
                 selected_card = tuple(new_selected_card)
             bc_back_list = []
-            unsuspended_list = bc_unsuspended_list()
             for e in bc_list:
                 if e not in unsuspended_list:
                     new_e = list(e)
@@ -155,6 +155,7 @@ def register():
                 bc_back_list = list(bc_list)
                 bc_back_list.remove(selected_card)
                 bc_list = tuple(bc_back_list)
+                unsuspended_list = bc_unsuspended_list()
                 if selected_card not in unsuspended_list:
                     new_selected_card = list(selected_card)
                     new_selected_card.append("suspended")
@@ -164,7 +165,6 @@ def register():
                     new_selected_card.append("")
                     selected_card = tuple(new_selected_card)
                 bc_back_list = []
-                unsuspended_list = bc_unsuspended_list()
                 for e in bc_list:
                     if e not in unsuspended_list:
                         new_e = list(e)
@@ -457,6 +457,7 @@ def balance_or_start():
         bc_list = get_bc_list("", logged_user, "", "")
         bc_back_list = list(bc_list)
         bc_back_list.remove(selected_card)
+        unsuspended_list = bc_unsuspended_list()
         if selected_card not in unsuspended_list:
             new_selected_card = list(selected_card)
             new_selected_card.append("suspended")
@@ -467,7 +468,6 @@ def balance_or_start():
             selected_card = tuple(new_selected_card)
         bc_list = tuple(bc_back_list)
         bc_back_list = []
-        unsuspended_list = bc_unsuspended_list()
         for e in bc_list:
             if e not in unsuspended_list:
                 new_e = list(e)
@@ -560,6 +560,7 @@ def to_home():
     bc_back_list = list(bc_list)
     bc_back_list.remove(selected_card)
     bc_list = tuple(bc_back_list)
+    unsuspended_list = bc_unsuspended_list()
     if selected_card not in unsuspended_list:
         new_selected_card = list(selected_card)
         new_selected_card.append("suspended")
@@ -569,7 +570,6 @@ def to_home():
         new_selected_card.append("")
         selected_card = tuple(new_selected_card)
     bc_back_list = []
-    unsuspended_list = bc_unsuspended_list()
     for e in bc_list:
         if e not in unsuspended_list:
             new_e = list(e)
