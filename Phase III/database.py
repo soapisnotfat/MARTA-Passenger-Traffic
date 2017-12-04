@@ -843,5 +843,5 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
 
 # Executions:
 set_connection()
-print(db_station_retrieve('P4'))
+print(db_station_retrieve('P4', 1))
 close_connection()
