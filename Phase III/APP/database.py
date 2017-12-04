@@ -840,8 +840,3 @@ def db_trip_retrieve(bcNum=None, startTime=None, endTime=None):
             _cursor.execute(query % (bcNum, startTime, endTime))
             res = _cursor.fetchall()
             return res
-
-# Executions:
-set_connection()
-print(db_station_retrieve('P4', 1))
-close_connection()

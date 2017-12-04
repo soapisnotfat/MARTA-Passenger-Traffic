@@ -118,7 +118,6 @@ def add_breezecard(num, username):
                 out = 0
             else:
                 out = 2
-        print db_bc_info("", username, "", "")
 
     # close connection
     close_connection()
@@ -201,7 +200,6 @@ def bc_add_value(num, value):
     current_card = db_bc_info(num, "", "", "")
     if current_card is None:
         return 1
-    print current_card
     card = current_card[0]
     card_value = card[1]
     current_value = float(card_value)
@@ -653,5 +651,3 @@ def end_trip(username, endId):
     close_connection()
 
     return status
-
-print(trip_history('largerabbit', None, '2017-12-03 15:03:06'))
