@@ -454,10 +454,16 @@ def passenger_flow(startsTime=None, endsTime=None):
     respective_name = {}
     flow_in = {}
     flow_out = {}
+    revenue = {}
     for index in range(0, len(station_id)):
         respective_name[station_id[index]] = station_name[index]
         flow_in[station_id[index]] = 0
         flow_out[station_id[index]] = 0
+
+    for i in station_id:
+        revenue[i] = 0
+    for t in trips:
+        revenue[t[-2]] += float(t[0])
 
     # update flow_in and flow-out based on conditions
     if startsTime is None and endsTime is None:
@@ -480,14 +486,8 @@ def passenger_flow(startsTime=None, endsTime=None):
 
     # calculate flow_net and revenue based on flow_in and flow-out
     flow_net = {}
-    revenue = {}
     for s in station_id:
         flow_net[s] = flow_in[s] - flow_out[s]
-        fare = 0
-        for i in stations:
-            if i[0] == s:
-                fare = float(i[2])
-        revenue[s] = flow_in[s] * fare
 
     # put all together
     out = []
@@ -651,3 +651,5 @@ def end_trip(username, endId):
     close_connection()
 
     return status
+
+print passenger_flow()
