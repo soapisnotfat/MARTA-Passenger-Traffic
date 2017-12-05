@@ -443,7 +443,7 @@ def passenger_flow(startsTime=None, endsTime=None):
     # set up connection
     set_connection()
     # execute the query
-    trips = db_trip_retrieve()
+    trips = db_trip_retrieve(None, startsTime, endsTime)
     stations = db_station_retrieve()
     # close connection
     close_connection()
@@ -652,4 +652,6 @@ def end_trip(username, endId):
 
     return status
 
-print passenger_flow()
+a = passenger_flow()
+for i in a:
+    print(i)
